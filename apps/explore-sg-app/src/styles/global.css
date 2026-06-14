@@ -16,6 +16,21 @@
   color: #18181b;
 }
 
+@media (max-width: 768px) {
+  .dark-popup .leaflet-popup-content-wrapper {
+    max-width: 220px !important;
+  }
+  .dark-popup .leaflet-popup-content {
+    margin: 8px !important;
+  }
+  .dark-popup .leaflet-popup-content img {
+    height: 100px !important;
+  }
+  .dark-popup .leaflet-popup-content div[style*="width:280px"] {
+    width: 200px !important;
+  }
+}
+
 .dark-popup .leaflet-popup-tip {
   background: #fff;
   border: none;

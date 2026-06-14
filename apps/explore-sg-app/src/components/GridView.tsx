@@ -7,9 +7,11 @@ interface Props {
   onAdd: (place: Place) => void;
   onRemove: (place: Place) => void;
   tripPlaceIds: Set<string>;
+  compact?: boolean;
+  onPlaceFocus?: (place: Place) => void;
 }
 
-export default function GridView({ places, onAdd, onRemove, tripPlaceIds }: Props) {
+export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compact, onPlaceFocus }: Props) {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   if (places.length === 0) {
@@ -23,7 +25,7 @@ export default function GridView({ places, onAdd, onRemove, tripPlaceIds }: Prop
   return (
     <>
       <div className="overflow-y-auto h-full px-6 pt-5 pb-10">
-        <div className="max-w-[1600px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10">
+        <div className={`max-w-[1600px] mx-auto grid gap-x-6 gap-y-10 ${compact ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
           {places.map(place => (
             <PlaceItem
               key={place.id}
@@ -31,7 +33,7 @@ export default function GridView({ places, onAdd, onRemove, tripPlaceIds }: Prop
               onAdd={onAdd}
               onRemove={onRemove}
               isInTrip={tripPlaceIds.has(place.id)}
-              onClick={() => setSelectedPlace(place)}
+              onClick={() => onPlaceFocus ? onPlaceFocus(place) : setSelectedPlace(place)}
             />
           ))}
         </div>

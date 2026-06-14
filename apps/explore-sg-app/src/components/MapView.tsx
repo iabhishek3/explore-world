@@ -103,19 +103,24 @@ export default function MapView({ places, onAdd, onRemove, tripPlaceIds, focusPl
         closeButton: false,
         className: 'dark-popup',
         maxWidth: 320,
+        autoPan: true,
+        autoPanPaddingTopLeft: [20, 80],
+        autoPanPaddingBottomRight: [20, 20],
       });
 
       markersByIdRef.current[place.id] = marker;
     });
   }, [places, ready, onAdd, onRemove, tripPlaceIds]);
 
-  // Focus on a place when clicked from itinerary
+  // Focus on a place when clicked from itinerary/grid
   useEffect(() => {
     if (!focusPlace || !mapRef.current || !ready) return;
     const marker = markersByIdRef.current[focusPlace.id];
     if (marker) {
-      mapRef.current.flyTo([focusPlace.latitude, focusPlace.longitude], 15, { duration: 0.8 });
-      setTimeout(() => marker.openPopup(), 500);
+      // Offset the center down so the popup appears in the middle of the viewport
+      const targetLatLng = LRef.current.latLng(focusPlace.latitude - 0.005, focusPlace.longitude);
+      mapRef.current.flyTo(targetLatLng, 14, { duration: 0.8 });
+      setTimeout(() => marker.openPopup(), 600);
     }
   }, [focusPlace, ready]);
 

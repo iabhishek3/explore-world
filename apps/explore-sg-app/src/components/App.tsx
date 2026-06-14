@@ -19,7 +19,7 @@ function loadItinerary(): ItineraryDay[] {
 }
 
 export default function App() {
-  const [view, setView] = useState<'map' | 'grid'>('grid');
+  const [showMap, setShowMap] = useState(false);
   const [activeFilters, setActiveFilters] = useState<Category[]>(['food', 'nature', 'culture', 'shopping', 'nightlife']);
   const [days, setDays] = useState<ItineraryDay[]>(loadItinerary);
   const [showItinerary, setShowItinerary] = useState(false);
@@ -30,7 +30,6 @@ export default function App() {
   }, [days]);
 
   const filteredPlaces = PLACES.filter(p => activeFilters.includes(p.category));
-
   const tripPlaceIds = new Set(days.flatMap(d => d.places.map(p => p.id)));
 
   const addToTrip = useCallback((place: Place) => {
@@ -48,9 +47,8 @@ export default function App() {
   }, []);
 
   const handlePlaceClick = useCallback((place: Place) => {
-    setView('map');
+    setShowMap(true);
     setFocusPlace(place);
-    // Ensure the category is active so marker is visible
     if (!activeFilters.includes(place.category)) {
       setActiveFilters(prev => [...prev, place.category]);
     }
@@ -93,18 +91,25 @@ export default function App() {
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden relative">
-        <div className="flex-1 relative">
-          {view === 'map' ? (
-            <div className="absolute inset-0 flex justify-center">
-              <div className="w-full max-w-[1600px] h-full p-4">
-                <MapView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} focusPlace={focusPlace} />
-              </div>
-            </div>
-          ) : (
-            <GridView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} />
-          )}
+        {/* Desktop: split view. Mobile: full grid or full map */}
+
+        {/* Grid */}
+        <div className={`overflow-hidden transition-all duration-300 ${
+          showMap ? 'hidden md:block md:w-1/2 md:border-r md:border-zinc-100' : 'flex-1'
+        }`}>
+          <GridView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} compact={showMap} onPlaceFocus={showMap ? (place) => setFocusPlace(place) : undefined} />
         </div>
 
+        {/* Map */}
+        {showMap && (
+          <div className="flex-1 md:w-1/2 md:flex-none relative">
+            <div className="absolute inset-0 p-3 md:p-3 p-0">
+              <MapView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} focusPlace={focusPlace} />
+            </div>
+          </div>
+        )}
+
+        {/* Itinerary Panel */}
         {showItinerary && (
           <div className="w-[300px] shrink-0 border-l border-zinc-200 bg-zinc-50 hidden md:flex flex-col">
             <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
@@ -114,12 +119,12 @@ export default function App() {
 
       {/* Floating Toggle */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
-        <ViewToggle view={view} onChange={setView} />
+        <ViewToggle showMap={showMap} onChange={setShowMap} />
       </div>
 
-      {/* Mobile Itinerary */}
+      {/* Mobile Itinerary — bottom sheet over map or grid */}
       {showItinerary && (
-        <div className="md:hidden fixed inset-x-0 bottom-0 h-[50vh] bg-white border-t border-zinc-200 rounded-t-2xl z-50 flex flex-col shadow-2xl">
+        <div className="md:hidden fixed inset-x-0 bottom-0 h-[50vh] bg-white border-t border-zinc-200 rounded-t-2xl z-[9998] flex flex-col shadow-2xl">
           <div className="flex justify-center pt-2 pb-1">
             <div className="w-8 h-1 rounded-full bg-zinc-300" />
           </div>
