@@ -39,7 +39,10 @@ export default function App() {
       const lastDay = prev[prev.length - 1];
       return prev.map(d => d.id === lastDay.id ? { ...d, places: [...d.places, place] } : d);
     });
-    setShowItinerary(true);
+    // Only auto-open itinerary panel on desktop
+    if (window.innerWidth >= 768) {
+      setShowItinerary(true);
+    }
   }, []);
 
   const removeFromTrip = useCallback((place: Place) => {
@@ -66,20 +69,30 @@ export default function App() {
           </div>
           <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Explore Singapore</span>
         </div>
-        <button
-          onClick={() => setShowItinerary(!showItinerary)}
-          className="relative flex items-center gap-2 px-3.5 py-2 rounded-full text-[13px] font-medium bg-white border border-zinc-200 text-zinc-700 hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-          </svg>
-          My Trip
-          {totalPlaces > 0 && (
-            <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
-              {totalPlaces}
-            </span>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowItinerary(!showItinerary)}
+            className="relative flex items-center gap-2 px-2.5 md:px-3.5 py-2 rounded-full text-[13px] font-medium bg-white border border-zinc-200 text-zinc-700 hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+            </svg>
+            <span className="hidden md:inline">My Trip</span>
+            {totalPlaces > 0 && (
+              <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                {totalPlaces}
+              </span>
+            )}
+          </button>
+          <button
+            className="flex items-center gap-2 px-2.5 md:px-3.5 py-2 rounded-full text-[13px] font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:shadow-md hover:opacity-90 transition-all cursor-pointer"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+            </svg>
+            <span className="hidden md:inline">AI Planner</span>
+          </button>
+        </div>
       </header>
 
       {/* Filter Bar */}
@@ -125,8 +138,12 @@ export default function App() {
       {/* Mobile Itinerary — bottom sheet over map or grid */}
       {showItinerary && (
         <div className="md:hidden fixed inset-x-0 bottom-0 h-[50vh] bg-white border-t border-zinc-200 rounded-t-2xl z-[9998] flex flex-col shadow-2xl">
-          <div className="flex justify-center pt-2 pb-1">
-            <div className="w-8 h-1 rounded-full bg-zinc-300" />
+          <div
+            className="flex flex-col items-center pt-2 pb-1 cursor-pointer"
+            onClick={() => setShowItinerary(false)}
+          >
+            <div className="w-10 h-1.5 rounded-full bg-zinc-300" />
+            <span className="text-[10px] text-zinc-400 mt-1">Tap to close</span>
           </div>
           <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
         </div>
