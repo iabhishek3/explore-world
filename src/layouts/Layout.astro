@@ -1,0 +1,156 @@
+---
+import '../styles/global.css'
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Explore Singapore — AI Travel Companion | Curated Places, Guides & Itineraries',
+  description = 'Discover Singapore with AI-powered itineraries, 100+ curated places, 8 local guides, and personalised recommendations. Works offline. Free on iOS.'
+} = Astro.props;
+
+const siteUrl = 'https://exploresg.info';
+const ogImage = `${siteUrl}/og-image.jpg`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="Singapore travel app, AI itinerary Singapore, things to do Singapore, Singapore guide, hawker food Singapore, best cafes Singapore, tourist attractions Singapore, Singapore trip planner, offline travel app, Singapore tourism" />
+    <meta name="author" content="Explore Singapore" />
+    <link rel="canonical" href={siteUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={siteUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Explore Singapore" />
+    <meta property="og:locale" content="en_SG" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={siteUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- GEO Tags -->
+    <meta name="geo.region" content="SG" />
+    <meta name="geo.placename" content="Singapore" />
+    <meta name="geo.position" content="1.3521;103.8198" />
+    <meta name="ICBM" content="1.3521, 103.8198" />
+
+    <!-- Language / Locale -->
+    <meta property="og:locale" content="en_SG" />
+    <meta http-equiv="content-language" content="en-sg" />
+    <link rel="alternate" hreflang="en" href={siteUrl} />
+
+    <!-- Mobile App Meta -->
+    <meta name="apple-itunes-app" content="app-id=6778833940" />
+    <meta name="application-name" content="Explore Singapore" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data — Organization -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "MobileApplication",
+      "name": "Explore Singapore",
+      "operatingSystem": "iOS",
+      "applicationCategory": "TravelApplication",
+      "description": description,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "SGD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "50"
+      }
+    })} />
+
+    <!-- Structured Data — Local Business / Tourism -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "TouristInformationCenter",
+      "name": "Explore Singapore App",
+      "description": "AI-powered travel companion for discovering Singapore",
+      "url": siteUrl,
+      "areaServed": {
+        "@type": "City",
+        "name": "Singapore",
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 1.3521,
+          "longitude": 103.8198
+        }
+      },
+      "availableLanguage": "English"
+    })} />
+
+    <!-- Structured Data — FAQ for AEO -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the best travel app for Singapore?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Explore Singapore is an AI-powered travel app featuring 100+ curated places, 8 themed guides, personalised itineraries, and offline support. It helps tourists discover hawker food, cafes, nightlife, beaches, and hidden gems."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Explore Singapore work offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Explore Singapore works 100% offline. All places, guides, and saved itineraries are cached locally so you can explore without WiFi or mobile data."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the AI itinerary generator work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Tell the app your interests (food, culture, nature), number of days, budget, and travel style. The AI generates a personalised day-by-day itinerary with timings, routes, and restaurant recommendations."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Explore Singapore free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Explore Singapore is free to download on iOS via TestFlight. No account required — just open and start exploring."
+          }
+        }
+      ]
+    })} />
+
+    <!-- Robots -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  </head>
+  <body class="overflow-x-hidden">
+    <slot />
+  </body>
+</html>
