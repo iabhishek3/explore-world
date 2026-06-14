@@ -1,0 +1,131 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import type { Category, Place, ItineraryDay } from '../types';
+import { PLACES } from '../lib/places';
+import FilterBar from './FilterBar';
+import ViewToggle from './ViewToggle';
+import MapView from './MapView';
+import GridView from './GridView';
+import Itinerary from './Itinerary';
+
+const STORAGE_KEY = 'exploresg-itinerary';
+
+function loadItinerary(): ItineraryDay[] {
+  if (typeof window === 'undefined') return [{ id: '1', label: 'Day 1', places: [] }];
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) return JSON.parse(saved);
+  } catch {}
+  return [{ id: '1', label: 'Day 1', places: [] }];
+}
+
+export default function App() {
+  const [view, setView] = useState<'map' | 'grid'>('grid');
+  const [activeFilters, setActiveFilters] = useState<Category[]>(['food', 'nature', 'culture', 'shopping', 'nightlife']);
+  const [days, setDays] = useState<ItineraryDay[]>(loadItinerary);
+  const [showItinerary, setShowItinerary] = useState(false);
+  const [focusPlace, setFocusPlace] = useState<Place | null>(null);
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
+  }, [days]);
+
+  const filteredPlaces = PLACES.filter(p => activeFilters.includes(p.category));
+
+  const tripPlaceIds = new Set(days.flatMap(d => d.places.map(p => p.id)));
+
+  const addToTrip = useCallback((place: Place) => {
+    setDays(prev => {
+      const allPlaceIds = prev.flatMap(d => d.places.map(p => p.id));
+      if (allPlaceIds.includes(place.id)) return prev;
+      const lastDay = prev[prev.length - 1];
+      return prev.map(d => d.id === lastDay.id ? { ...d, places: [...d.places, place] } : d);
+    });
+    setShowItinerary(true);
+  }, []);
+
+  const removeFromTrip = useCallback((place: Place) => {
+    setDays(prev => prev.map(d => ({ ...d, places: d.places.filter(p => p.id !== place.id) })));
+  }, []);
+
+  const handlePlaceClick = useCallback((place: Place) => {
+    setView('map');
+    setFocusPlace(place);
+    // Ensure the category is active so marker is visible
+    if (!activeFilters.includes(place.category)) {
+      setActiveFilters(prev => [...prev, place.category]);
+    }
+  }, [activeFilters]);
+
+  const totalPlaces = days.reduce((sum, d) => sum + d.places.length, 0);
+
+  return (
+    <div className="flex flex-col h-screen bg-white text-zinc-900">
+      {/* Header */}
+      <header className="shrink-0 h-16 flex items-center justify-between px-6 border-b border-zinc-100">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-b from-red-500 to-red-600 flex items-center justify-center">
+            <span className="text-[10px] font-bold text-white">SG</span>
+          </div>
+          <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Explore Singapore</span>
+        </div>
+        <button
+          onClick={() => setShowItinerary(!showItinerary)}
+          className="relative flex items-center gap-2 px-3.5 py-2 rounded-full text-[13px] font-medium bg-white border border-zinc-200 text-zinc-700 hover:shadow-md hover:border-zinc-300 transition-all cursor-pointer"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          My Trip
+          {totalPlaces > 0 && (
+            <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+              {totalPlaces}
+            </span>
+          )}
+        </button>
+      </header>
+
+      {/* Filter Bar */}
+      <div className="shrink-0 border-b border-zinc-100 px-6">
+        <div className="max-w-[1600px] mx-auto">
+          <FilterBar active={activeFilters} onChange={setActiveFilters} />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 relative">
+          {view === 'map' ? (
+            <div className="absolute inset-0 flex justify-center">
+              <div className="w-full max-w-[1600px] h-full p-4">
+                <MapView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} focusPlace={focusPlace} />
+              </div>
+            </div>
+          ) : (
+            <GridView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} />
+          )}
+        </div>
+
+        {showItinerary && (
+          <div className="w-[300px] shrink-0 border-l border-zinc-200 bg-zinc-50 hidden md:flex flex-col">
+            <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
+          </div>
+        )}
+      </div>
+
+      {/* Floating Toggle */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
+        <ViewToggle view={view} onChange={setView} />
+      </div>
+
+      {/* Mobile Itinerary */}
+      {showItinerary && (
+        <div className="md:hidden fixed inset-x-0 bottom-0 h-[50vh] bg-white border-t border-zinc-200 rounded-t-2xl z-50 flex flex-col shadow-2xl">
+          <div className="flex justify-center pt-2 pb-1">
+            <div className="w-8 h-1 rounded-full bg-zinc-300" />
+          </div>
+          <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
+        </div>
+      )}
+    </div>
+  );
+}
