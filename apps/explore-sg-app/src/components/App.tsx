@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Category, Place, ItineraryDay } from '../types';
 import { PLACES } from '../lib/places';
 import FilterBar from './FilterBar';
@@ -135,19 +135,65 @@ export default function App() {
         <ViewToggle showMap={showMap} onChange={setShowMap} />
       </div>
 
-      {/* Mobile Itinerary — bottom sheet over map or grid */}
+      {/* Mobile Itinerary — draggable bottom sheet */}
       {showItinerary && (
-        <div className="md:hidden fixed inset-x-0 bottom-0 h-[50vh] bg-white border-t border-zinc-200 rounded-t-2xl z-[9998] flex flex-col shadow-2xl">
-          <div
-            className="flex flex-col items-center pt-2 pb-1 cursor-pointer"
-            onClick={() => setShowItinerary(false)}
-          >
-            <div className="w-10 h-1.5 rounded-full bg-zinc-300" />
-            <span className="text-[10px] text-zinc-400 mt-1">Tap to close</span>
-          </div>
+        <MobileSheet onClose={() => setShowItinerary(false)}>
           <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
-        </div>
+        </MobileSheet>
       )}
+    </div>
+  );
+}
+
+function MobileSheet({ children, onClose }: { children: React.ReactNode; onClose: () => void }) {
+  const [height, setHeight] = useState(50); // percentage
+  const dragging = useRef(false);
+  const startY = useRef(0);
+  const startHeight = useRef(50);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    dragging.current = true;
+    startY.current = e.touches[0].clientY;
+    startHeight.current = height;
+  }
+
+  function handleTouchMove(e: React.TouchEvent) {
+    if (!dragging.current) return;
+    const deltaY = startY.current - e.touches[0].clientY;
+    const deltaPercent = (deltaY / window.innerHeight) * 100;
+    const newHeight = Math.min(85, Math.max(15, startHeight.current + deltaPercent));
+    setHeight(newHeight);
+  }
+
+  function handleTouchEnd() {
+    dragging.current = false;
+    // Snap: if dragged below 20%, close. If between 20-40% snap to 30%. If above 40% snap to 60%.
+    if (height < 20) {
+      onClose();
+    } else if (height < 40) {
+      setHeight(30);
+    } else {
+      setHeight(60);
+    }
+  }
+
+  return (
+    <div
+      className="md:hidden fixed inset-x-0 bottom-0 bg-white border-t border-zinc-200 rounded-t-2xl z-[9998] flex flex-col shadow-2xl transition-[height] duration-150"
+      style={{ height: `${height}vh` }}
+    >
+      <div
+        className="flex flex-col items-center pt-2.5 pb-2 cursor-grab active:cursor-grabbing touch-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onClick={() => { if (height <= 30) onClose(); }}
+      >
+        <div className="w-10 h-1.5 rounded-full bg-zinc-300" />
+      </div>
+      <div className="flex-1 overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }
