@@ -1,8 +1,14 @@
-name: Deploy to EC2
+name: Deploy Explore SG Website
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'apps/explore-sg-website/**'
+
+defaults:
+  run:
+    working-directory: apps/explore-sg-website
 
 jobs:
   deploy:
@@ -27,9 +33,9 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "dist/*"
+          source: "apps/explore-sg-website/dist/*"
           target: /home/ubuntu/explore-sg-website/
-          strip_components: 1
+          strip_components: 3
 
       - name: Restart PM2
         uses: appleboy/ssh-action@v1.0.3
