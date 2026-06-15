@@ -26,12 +26,13 @@ const guidesCount = recommendations?.length ?? 0;
   <!-- Nav -->
   <nav id="main-nav" aria-label="Main navigation" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
     <div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
-      <span class="nav-text text-[15px] tracking-tight text-white transition-colors duration-300">Explore <strong class="font-extrabold text-[#EF3340]">Singapore</strong></span>
+      <span class="nav-text text-[19px] tracking-tight text-white transition-colors duration-300">Explore <strong class="font-extrabold text-[#EF3340]">Singapore</strong></span>
       <div class="flex items-center gap-6">
         <a href="#features" class="nav-link text-[13px] text-white/60 hover:text-white transition-colors hidden md:block">Features</a>
+        <a href="#places" class="nav-link text-[13px] text-white/60 hover:text-white transition-colors hidden md:block">Places</a>
         <a href="#guides" class="nav-link text-[13px] text-white/60 hover:text-white transition-colors hidden md:block">Guides</a>
-        <a href="#download" class="nav-btn bg-white text-[#222] text-[13px] font-semibold px-4 py-2 rounded-full hover:opacity-80 transition-all">
-          Get the App
+        <a href="https://app.exploresg.info" class="nav-btn bg-white text-[#222] text-[13px] font-semibold px-4 py-2 rounded-full hover:opacity-80 transition-all">
+          Plan Your Trip
         </a>
       </div>
     </div>
@@ -39,51 +40,46 @@ const guidesCount = recommendations?.length ?? 0;
 
   <!-- Hero -->
   <section class="relative overflow-hidden">
-    <!-- Hero text with background image -->
     <div class="relative min-h-[90vh] flex items-center">
       <div class="absolute inset-0">
-        <img src="/hero-bg.jpg" alt="Singapore" class="w-full h-full object-cover" />
+        <img src="/hero-bg.jpg" alt="Singapore skyline at night" class="w-full h-full object-cover" />
         <div class="absolute inset-0 bg-black/50"></div>
       </div>
       <div class="relative z-10 max-w-[1200px] mx-auto px-6 py-40">
         <div>
           <div class="animate-fade-up inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 mb-6 backdrop-blur-sm">
             <span class="w-2 h-2 rounded-full bg-[#EF3340] animate-pulse"></span>
-            <span class="text-white text-[12px] font-semibold">AI-Powered Travel Companion</span>
+            <span class="text-white text-[12px] font-semibold">Free AI Trip Planner</span>
           </div>
           <h1 class="animate-fade-up delay-1 text-[clamp(2.5rem,6vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight text-white">
             The smartest way to explore <span class="text-[#EF3340]">Singapore</span>
           </h1>
           <p class="animate-fade-up delay-2 mt-6 text-white/70 text-lg md:text-xl leading-relaxed max-w-xl">
-            AI-generated itineraries. {placesCount}+ curated places. {guidesCount} local guides. Works completely offline.
+            {placesCount}+ places. Local guides. AI itineraries. One free planner — no sign-up, no app store, just go.
           </p>
           <div class="animate-fade-up delay-3 mt-10 flex gap-4 items-center">
-            <a href="#download" class="bg-white text-[--color-text-primary] font-semibold px-7 py-3.5 rounded-full text-[15px] hover:bg-white/90 transition-all hover:shadow-lg">
-              Download for iOS
+            <a href="https://app.exploresg.info" class="bg-white text-[--color-text-primary] font-semibold px-7 py-3.5 rounded-full text-[15px] hover:bg-white/90 transition-all hover:shadow-lg">
+              Plan Your Trip
             </a>
-            <span class="text-[13px] text-white/50">Free on TestFlight</span>
+            <span class="text-[13px] text-white/50">Free. No sign-up required.</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Phone mockups below hero -->
+    <!-- App Preview -->
     <div class="bg-white pt-16 pb-16">
     <div class="max-w-[1200px] mx-auto px-6">
-
-      <!-- App Preview — Stacked phones -->
-      <div class="animate-fade-up delay-4 mt-20 relative h-[500px] md:h-[650px] flex items-center justify-center">
-        <!-- Background phone (detail view) -->
+      <div class="animate-fade-up delay-4 mt-12">
         <img
-          src="/mockup-detail.png"
-          alt="Place detail screen"
-          class="absolute right-[5%] md:right-[15%] top-8 w-[260px] md:w-[320px] animate-float-delayed"
+          src="/app-preview.png"
+          alt="Explore Singapore web app — browse places and plan trips on interactive map"
+          class="w-full h-auto hidden md:block"
         />
-        <!-- Main phone (home screen) -->
         <img
-          src="/mockup-home.png"
-          alt="Explore SG home screen"
-          class="absolute left-[5%] md:left-[15%] top-0 w-[280px] md:w-[360px] animate-float z-10 drop-shadow-2xl"
+          src="/app-preview-mobile.png"
+          alt="Explore Singapore mobile web app showing curated places"
+          class="w-full max-w-[360px] mx-auto h-auto md:hidden"
         />
       </div>
     </div>
@@ -102,9 +98,9 @@ const guidesCount = recommendations?.length ?? 0;
           <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">🛍️</span>Shopping</span>
           <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">🏛️</span>Museums</span>
           <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">🏖️</span>Beaches</span>
-          <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">📸</span>Instagram</span>
+          <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">📸</span>Instagram Spots</span>
           <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">✨</span>AI Itineraries</span>
-          <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">📡</span>Offline</span>
+          <span class="inline-flex items-center gap-2 px-4 py-2 bg-[#F7F7F7] rounded-full text-[13px] font-medium text-[#222]"><span class="text-base">🗺️</span>Interactive Maps</span>
         </>
       ))}
     </div>
@@ -115,12 +111,11 @@ const guidesCount = recommendations?.length ?? 0;
     <div class="max-w-[1200px] mx-auto px-6">
       <div class="grid md:grid-cols-2 gap-16 items-center">
         <div>
-          <p class="text-[#EF3340] text-[13px] font-semibold tracking-wide uppercase">AI Itinerary</p>
-          <h2 class="mt-3 text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
-            Your perfect trip, planned in seconds
+          <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+            Tell us what you like.<br/>We'll plan the rest.
           </h2>
           <p class="mt-5 text-[--color-text-secondary] text-lg leading-relaxed">
-            Tell us your interests, how many days you have, and your budget. Our AI generates a complete day-by-day itinerary — with timings, routes, and restaurant picks you'll actually love.
+            Interests, days, budget — that's all we need. The AI handles timings, routes, and picks restaurants you'll actually want to eat at.
           </p>
           <ul class="mt-8 space-y-4">
             <li class="flex items-start gap-3">
@@ -133,68 +128,68 @@ const guidesCount = recommendations?.length ?? 0;
               <span class="w-6 h-6 rounded-full bg-[--color-babu]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span class="w-2 h-2 rounded-full bg-[--color-babu]"></span>
               </span>
-              <span class="text-[--color-text-secondary]">Swap places, regenerate, or edit on the fly</span>
+              <span class="text-[--color-text-secondary]">Drag, reorder, and customise your itinerary in real time</span>
             </li>
             <li class="flex items-start gap-3">
               <span class="w-6 h-6 rounded-full bg-[--color-arches]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span class="w-2 h-2 rounded-full bg-[--color-arches]"></span>
               </span>
-              <span class="text-[--color-text-secondary]">Learns from your saves — smarter each time you use it</span>
+              <span class="text-[--color-text-secondary]">Interactive map shows every stop — plan visually</span>
             </li>
           </ul>
         </div>
         <!-- Itinerary card visual -->
         <div class="relative">
-          <div class="bg-[#1C1C1E] rounded-[32px] p-8 hover-lift overflow-hidden" style="border: 0.5px solid rgba(255,255,255,0.1)">
-            <!-- Subtle glow -->
-            <div class="absolute top-0 right-0 w-40 h-40 bg-[#EF3340]/20 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-0 left-0 w-32 h-32 bg-[--color-babu]/15 rounded-full blur-3xl"></div>
-
-            <div class="relative z-10 space-y-5">
-              <!-- Header -->
-              <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                    <span class="text-lg">✨</span>
-                  </div>
-                  <div>
-                    <p class="font-bold text-white text-sm">3-Day Singapore Trip</p>
-                    <p class="text-[11px] text-white/40">AI Generated · Just now</p>
-                  </div>
+          <!-- Main card -->
+          <div class="bg-white rounded-[24px] overflow-hidden shadow-[0_8px_60px_rgba(0,0,0,0.08)] hover-lift" style="border: 1px solid rgba(0,0,0,0.04)">
+            <!-- Top bar -->
+            <div class="px-6 pt-5 pb-4 border-b border-[#F2F2F2]">
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="font-bold text-[16px] text-[#222] tracking-tight">3-Day Singapore Trip</p>
+                  <p class="text-[12px] text-[#999] mt-0.5">19 places · Optimised for walking</p>
                 </div>
-                <span class="text-[10px] text-white/30 bg-white/5 px-2.5 py-1 rounded-full border border-white/10">Preview</span>
-              </div>
-
-              <!-- Itinerary days -->
-              {[
-                { day: 'Day 1', title: 'Marina Bay & Culture', places: '6 spots · 8hrs', color: 'bg-[#EF3340]' },
-                { day: 'Day 2', title: 'Food & Hidden Gems', places: '8 spots · 7hrs', color: 'bg-[--color-arches]' },
-                { day: 'Day 3', title: 'Nature & Beaches', places: '5 spots · 6hrs', color: 'bg-[--color-babu]' },
-              ].map((item, i) => (
-                <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4 border border-white/5" style={`animation: slide-in-right 0.6s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.15}s forwards; opacity: 0;`}>
-                  <div class={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center text-white text-xs font-bold shadow-lg`}>
-                    {i + 1}
-                  </div>
-                  <div class="flex-1">
-                    <p class="text-white text-sm font-semibold">{item.title}</p>
-                    <p class="text-white/40 text-[11px] mt-0.5">{item.places}</p>
-                  </div>
-                  <svg class="w-4 h-4 text-white/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                  </svg>
+                <div class="flex items-center gap-1.5 bg-[#E8FFF3] px-2.5 py-1 rounded-full">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#22c55e]"></span>
+                  <span class="text-[10px] font-semibold text-[#16a34a]">AI Generated</span>
                 </div>
-              ))}
-
-              <!-- Bottom meta -->
-              <div class="flex items-center justify-between pt-2">
-                <div class="flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                  <span class="text-[11px] text-white/40">Optimised for walking distance</span>
-                </div>
-                <span class="text-[11px] text-white/30">19 places total</span>
               </div>
             </div>
+
+            <!-- Days list -->
+            <div class="px-6 py-4 space-y-3">
+              {[
+                { title: 'Marina Bay & Culture', places: '6 spots', time: '8 hrs', color: '#EF3340', icon: '🏙️' },
+                { title: 'Food & Hidden Gems', places: '8 spots', time: '7 hrs', color: '#FC642D', icon: '🍜' },
+                { title: 'Nature & Beaches', places: '5 spots', time: '6 hrs', color: '#00A699', icon: '🌴' },
+              ].map((item, i) => (
+                <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-[#FAFAFA] transition-colors" style={`animation: slide-in-right 0.5s cubic-bezier(0.16,1,0.3,1) ${0.2 + i * 0.12}s forwards; opacity: 0;`}>
+                  <div class="w-11 h-11 rounded-xl flex items-center justify-center text-lg" style={`background: ${item.color}12;`}>
+                    {item.icon}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-[14px] font-semibold text-[#222] truncate">{item.title}</p>
+                    <p class="text-[12px] text-[#999] mt-0.5">{item.places} · {item.time}</p>
+                  </div>
+                  <span class="text-[11px] font-medium text-[#222] bg-[#F5F5F5] px-2.5 py-1 rounded-full">Day {i + 1}</span>
+                </div>
+              ))}
+            </div>
+
+            <!-- Bottom action -->
+            <div class="px-6 pb-5 pt-2">
+              <a href="https://app.exploresg.info" class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-[#222] text-white text-[13px] font-semibold hover:bg-[#333] transition-colors">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+                Try this itinerary
+              </a>
+            </div>
           </div>
+
+          <!-- Floating decoration -->
+          <div class="absolute -top-3 -right-3 w-16 h-16 bg-[#EF3340]/5 rounded-full blur-xl"></div>
+          <div class="absolute -bottom-4 -left-4 w-20 h-20 bg-[#00A699]/5 rounded-full blur-xl"></div>
         </div>
       </div>
     </div>
@@ -202,16 +197,15 @@ const guidesCount = recommendations?.length ?? 0;
 
   <!-- Must Visit Places -->
   {featuredPlaces && featuredPlaces.length > 0 && (
-    <section class="py-28 md:py-36 bg-[--color-surface] reveal">
+    <section id="places" class="py-28 md:py-36 bg-[--color-surface] reveal">
       <div class="max-w-[1200px] mx-auto px-6">
         <div class="flex items-end justify-between mb-12">
           <div>
-            <p class="text-[#EF3340] text-[13px] font-semibold tracking-wide uppercase">Must Visit</p>
-            <h2 class="mt-3 text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
-              Places you can't miss
+            <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+              Don't miss these.
             </h2>
           </div>
-          <a href="#download" class="hidden md:block text-[13px] text-[--color-text-secondary] hover:text-[--color-text-primary] transition-colors underline underline-offset-4 decoration-[--color-border]">
+          <a href="https://app.exploresg.info" class="hidden md:block text-[13px] text-[--color-text-secondary] hover:text-[--color-text-primary] transition-colors underline underline-offset-4 decoration-[--color-border]">
             See all {placesCount}+ places
           </a>
         </div>
@@ -245,23 +239,26 @@ const guidesCount = recommendations?.length ?? 0;
   )}
 
   <!-- Features Grid -->
-  <section id="features" class="py-28 md:py-36 reveal">
+  <section id="features" class="py-28 md:py-36 reveal mesh-gradient-1 relative overflow-hidden">
+    <!-- Animated blobs -->
+    <div class="absolute top-20 left-10 w-72 h-72 bg-[#EF3340]/5 rounded-full blur-3xl animate-blob"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#00A699]/5 rounded-full blur-3xl animate-blob-delay"></div>
     <div class="max-w-[1200px] mx-auto px-6">
-      <div class="text-center max-w-2xl mx-auto">
-        <p class="text-[#EF3340] text-[13px] font-semibold tracking-wide uppercase">Features</p>
-        <h2 class="mt-3 text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
-          Built for real travellers
+      <div class="max-w-2xl">
+        <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+          Not another travel blog.<br/>A proper planning tool.
         </h2>
+        <p class="mt-4 text-[--color-text-secondary] text-lg">Everything you need to plan a Singapore trip — nothing you don't.</p>
       </div>
 
       <div class="mt-16 grid grid-cols-2 lg:grid-cols-4 gap-3">
         <!-- AI Recommendations — large -->
-        <div class="col-span-2 row-span-2 bg-[#1C1C1E] rounded-[28px] p-8 flex flex-col justify-between hover-lift overflow-hidden relative min-h-[400px]" style="border: 0.5px solid rgba(255,255,255,0.08)">
-          <div class="absolute top-0 right-0 w-40 h-40 bg-[#EF3340]/20 rounded-full blur-3xl"></div>
+        <div class="col-span-2 row-span-2 bg-gradient-to-br from-[#FFF5F5] to-[#FEF0F0] rounded-[28px] p-8 flex flex-col justify-between hover-lift overflow-hidden relative min-h-[400px]" style="border: 0.5px solid rgba(239,51,64,0.08)">
+          <div class="absolute top-0 right-0 w-40 h-40 bg-[#EF3340]/5 rounded-full blur-3xl"></div>
           <div class="relative z-10">
             <div class="flex items-center gap-2 mb-5">
               <span class="text-xl text-[#EF3340]">✦</span>
-              <span class="text-[10px] text-white/30 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">AI Powered</span>
+              <span class="text-[10px] text-[#EF3340]/50 bg-[#EF3340]/5 px-2 py-0.5 rounded-full border border-[#EF3340]/10">AI Powered</span>
             </div>
             <div class="space-y-2.5">
               {[
@@ -269,11 +266,11 @@ const guidesCount = recommendations?.length ?? 0;
                 { place: 'Tiong Bahru Market', reason: 'You saved 3 hawker spots nearby', match: '91%' },
                 { place: 'Henderson Waves', reason: 'Popular with nature lovers like you', match: '87%' },
               ].map((item, i) => (
-                <div class="bg-white/5 rounded-xl p-3 flex items-center gap-3 border border-white/5" style={`animation: fade-up 0.5s cubic-bezier(0.16,1,0.3,1) ${0.2 + i * 0.12}s forwards; opacity: 0;`}>
-                  <div class="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center text-sm">📍</div>
+                <div class="bg-white rounded-xl p-3 flex items-center gap-3 shadow-sm" style={`animation: fade-up 0.5s cubic-bezier(0.16,1,0.3,1) ${0.2 + i * 0.12}s forwards; opacity: 0;`}>
+                  <div class="w-9 h-9 rounded-lg bg-[#EF3340]/10 flex items-center justify-center text-sm">📍</div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-white text-[13px] font-semibold truncate">{item.place}</p>
-                    <p class="text-white/35 text-[10px] truncate">{item.reason}</p>
+                    <p class="text-[#222] text-[13px] font-semibold truncate">{item.place}</p>
+                    <p class="text-[#717171] text-[10px] truncate">{item.reason}</p>
                   </div>
                   <span class="text-[#00A699] text-[11px] font-bold">{item.match}</span>
                 </div>
@@ -281,44 +278,52 @@ const guidesCount = recommendations?.length ?? 0;
             </div>
           </div>
           <div class="relative z-10 mt-5">
-            <h3 class="text-xl font-bold text-white">Smart Recommendations</h3>
-            <p class="mt-1 text-white/50 text-sm">Learns from your saves — gets smarter every time.</p>
+            <h3 class="text-xl font-bold text-[#222]">Smart Recommendations</h3>
+            <p class="mt-1 text-[#717171] text-sm">Learns from your saves — gets smarter every time.</p>
           </div>
         </div>
 
-        <!-- Offline — coral -->
+        <!-- No download -->
         <div class="col-span-1 bg-[#FDECED] rounded-[28px] p-7 flex flex-col justify-between hover-lift min-h-[190px]">
-          <span class="text-3xl">📡</span>
+          <svg class="w-8 h-8 text-[#EF3340]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+          </svg>
           <div>
-            <h3 class="text-[15px] font-bold text-[#222]">100% Offline</h3>
-            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">No WiFi needed. Works everywhere.</p>
+            <h3 class="text-[15px] font-bold text-[#222]">Zero friction</h3>
+            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Open the link. Start planning. That's it.</p>
           </div>
         </div>
 
-        <!-- Distance — teal -->
+        <!-- Map -->
         <div class="col-span-1 bg-[#EDFCFB] rounded-[28px] p-7 flex flex-col justify-between hover-lift min-h-[190px]">
-          <span class="text-3xl">📍</span>
+          <svg class="w-8 h-8 text-[#0891b2]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+          </svg>
           <div>
-            <h3 class="text-[15px] font-bold text-[#222]">Distance Sorting</h3>
-            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Nearest gems shown first.</p>
+            <h3 class="text-[15px] font-bold text-[#222]">Map-first</h3>
+            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Every spot on an interactive map. Zoom, click, add to trip.</p>
           </div>
         </div>
 
-        <!-- Save & Share — amber -->
+        <!-- Drag -->
         <div class="col-span-1 bg-[#FFF8E6] rounded-[28px] p-7 flex flex-col justify-between hover-lift min-h-[190px]">
-          <span class="text-3xl">🗺️</span>
+          <svg class="w-8 h-8 text-[#d97706]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
           <div>
-            <h3 class="text-[15px] font-bold text-[#222]">Save & Share</h3>
-            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Bookmark, share, navigate.</p>
+            <h3 class="text-[15px] font-bold text-[#222]">Drag to reorder</h3>
+            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Your itinerary. Your order. Move things around freely.</p>
           </div>
         </div>
 
-        <!-- 8 Guides — lavender -->
+        <!-- Guides -->
         <div class="col-span-1 bg-[#F3EEFF] rounded-[28px] p-7 flex flex-col justify-between hover-lift min-h-[190px]">
-          <span class="text-3xl">📚</span>
+          <svg class="w-8 h-8 text-[#7c3aed]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
           <div>
-            <h3 class="text-[15px] font-bold text-[#222]">8 Local Guides</h3>
-            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Curated by locals, not algorithms.</p>
+            <h3 class="text-[15px] font-bold text-[#222]">{guidesCount} local guides</h3>
+            <p class="mt-1 text-[#717171] text-[12px] leading-relaxed">Written by people who actually live here.</p>
           </div>
         </div>
       </div>
@@ -326,16 +331,15 @@ const guidesCount = recommendations?.length ?? 0;
   </section>
 
   <!-- Guides -->
-  <section id="guides" class="py-28 md:py-36 bg-[--color-surface] reveal">
+  <section id="guides" class="py-28 md:py-36 mesh-gradient-2 reveal">
     <div class="max-w-[1200px] mx-auto px-6">
       <div class="grid md:grid-cols-2 gap-16 items-start">
         <div class="md:sticky md:top-32">
-          <p class="text-[#EF3340] text-[13px] font-semibold tracking-wide uppercase">Guides</p>
-          <h2 class="mt-3 text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
-            {guidesCount} curated collections, built by locals
+          <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+            {guidesCount} guides.<br/>Zero fluff.
           </h2>
           <p class="mt-5 text-[--color-text-secondary] text-lg leading-relaxed">
-            Not another generic travel list. Each guide is researched, verified, and packed with places you won't find on the first page of Google.
+            Each one researched and verified. Places you won't find on the first page of Google.
           </p>
         </div>
 
@@ -361,28 +365,52 @@ const guidesCount = recommendations?.length ?? 0;
     </div>
   </section>
 
-  <!-- Download CTA -->
-  <section id="download" class="py-28 md:py-36 reveal">
-    <div class="max-w-[1200px] mx-auto px-6">
-      <div class="relative bg-[#1C1C1E] rounded-[32px] px-8 md:px-16 py-16 md:py-24 text-center overflow-hidden" style="border: 0.5px solid rgba(255,255,255,0.06)">
-        <!-- Decorative elements -->
-        <div class="absolute top-0 right-0 w-[300px] h-[300px] bg-[#EF3340]/10 rounded-full blur-3xl"></div>
-        <div class="absolute bottom-0 left-0 w-[200px] h-[200px] bg-[--color-babu]/10 rounded-full blur-3xl"></div>
+  <!-- FAQ Section -->
+  <section id="faq" class="py-28 md:py-36 reveal relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-[#7c3aed]/3 rounded-full blur-3xl animate-blob-delay-2"></div>
+    <div class="max-w-[800px] mx-auto px-6">
+      <div class="mb-14">
+        <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+          Questions? Answers.
+        </h2>
+      </div>
 
-        <div class="relative z-10">
-          <h2 class="text-3xl md:text-[2.75rem] font-extrabold text-white leading-tight tracking-tight">
-            Start exploring Singapore
-          </h2>
-          <p class="mt-4 text-white/50 text-lg max-w-lg mx-auto leading-relaxed">
-            Free to download. No account required. Just open the app and discover.
-          </p>
-          <div class="mt-10">
-            <a href="#" class="inline-block bg-[#EF3340] text-white font-semibold px-8 py-4 rounded-full text-[15px] hover:opacity-90 transition-all hover:shadow-lg hover:shadow-[#EF3340]/20">
-              Download on TestFlight
-            </a>
-          </div>
-          <p class="mt-6 text-white/25 text-[13px]">iOS only. Android coming soon.</p>
-        </div>
+      <div class="space-y-4">
+        {[
+          { q: 'What is Explore Singapore?', a: 'Explore Singapore is a free AI-powered trip planner that helps you discover 100+ curated places, plan personalised itineraries, and explore interactive maps — all in your browser with no sign-up required.' },
+          { q: 'Is it free to use?', a: 'Yes, completely free. No account, no sign-up, no hidden fees — just open the website and start planning your trip.' },
+          { q: 'How does the AI trip planner work?', a: 'Tell us your interests (food, culture, nature), how many days you have, and your budget. The AI generates a personalised day-by-day itinerary with timings, routes, and restaurant recommendations that you can customise.' },
+          { q: 'Do I need to create an account?', a: 'No. Explore Singapore works instantly in your browser — no downloads, no sign-ups. Your itinerary is saved locally so you can come back anytime.' },
+        ].map((item, i) => (
+          <details class="group bg-white rounded-2xl border border-[--color-border] overflow-hidden">
+            <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+              <span class="font-semibold text-[15px] text-[#222]">{item.q}</span>
+              <svg class="w-5 h-5 text-zinc-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <div class="px-6 pb-6 text-[--color-text-secondary] text-[14px] leading-relaxed">
+              {item.a}
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-28 md:py-36 reveal">
+    <div class="max-w-[1200px] mx-auto px-6 text-center">
+      <h2 class="text-3xl md:text-[2.75rem] font-extrabold leading-tight tracking-tight">
+        Your Singapore trip starts here.
+      </h2>
+      <p class="mt-4 text-[--color-text-secondary] text-lg max-w-md mx-auto">
+        No account. No download. Just a really good trip planner.
+      </p>
+      <div class="mt-10">
+        <a href="https://app.exploresg.info" class="inline-block bg-[#EF3340] text-white font-semibold px-8 py-4 rounded-full text-[15px] hover:opacity-90 transition-all hover:shadow-lg hover:shadow-[#EF3340]/20">
+          Plan Your Trip
+        </a>
       </div>
     </div>
   </section>
@@ -391,37 +419,32 @@ const guidesCount = recommendations?.length ?? 0;
   <!-- Footer -->
   <footer class="bg-[#1C1C1E] pt-16 pb-8">
     <div class="max-w-[1200px] mx-auto px-6">
-      <!-- Top section -->
       <div class="grid md:grid-cols-4 gap-10 pb-12 border-b border-white/10">
-        <!-- Brand -->
         <div class="md:col-span-2">
-          <span class="text-[17px] text-white">Explore <strong class="font-extrabold text-[#EF3340]">Singapore</strong></span>
+          <span class="text-[19px] text-white">Explore <strong class="font-extrabold text-[#EF3340]">Singapore</strong></span>
           <p class="mt-3 text-white/40 text-[14px] leading-relaxed max-w-sm">
-            Your AI-powered travel companion. Discover the best of Singapore with personalised itineraries and curated local guides.
+            Your AI-powered trip planner. Discover the best of Singapore with personalised itineraries and curated local guides — free in your browser.
           </p>
         </div>
-        <!-- Links -->
         <div>
           <p class="text-white/60 text-[12px] font-semibold uppercase tracking-wider mb-4">Product</p>
           <ul class="space-y-3">
             <li><a href="#features" class="text-white/40 text-[14px] hover:text-white transition-colors">Features</a></li>
             <li><a href="#guides" class="text-white/40 text-[14px] hover:text-white transition-colors">Guides</a></li>
-            <li><a href="#download" class="text-white/40 text-[14px] hover:text-white transition-colors">Download</a></li>
+            <li><a href="https://app.exploresg.info" class="text-white/40 text-[14px] hover:text-white transition-colors">Plan Your Trip</a></li>
           </ul>
         </div>
         <div>
           <p class="text-white/60 text-[12px] font-semibold uppercase tracking-wider mb-4">Legal</p>
           <ul class="space-y-3">
-            <li><a href="#" class="text-white/40 text-[14px] hover:text-white transition-colors">Privacy Policy</a></li>
-            <li><a href="#" class="text-white/40 text-[14px] hover:text-white transition-colors">Terms of Service</a></li>
-            <li><a href="#" class="text-white/40 text-[14px] hover:text-white transition-colors">Contact</a></li>
+            <li><a href="/privacy" class="text-white/40 text-[14px] hover:text-white transition-colors">Privacy Policy</a></li>
+            <li><a href="/terms" class="text-white/40 text-[14px] hover:text-white transition-colors">Terms of Service</a></li>
           </ul>
         </div>
       </div>
-      <!-- Bottom -->
       <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-white/25 text-[13px]">&copy; 2026 Explore Singapore. All rights reserved.</p>
-        <p class="text-white/25 text-[13px]">Built with love in Singapore 🇸🇬</p>
+        <p class="text-white/25 text-[13px]">Built with love in Singapore</p>
       </div>
     </div>
   </footer>

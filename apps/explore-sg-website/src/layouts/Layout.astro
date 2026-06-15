@@ -7,8 +7,8 @@ interface Props {
 }
 
 const {
-  title = 'Explore Singapore — AI Travel Companion | Curated Places, Guides & Itineraries',
-  description = 'Discover Singapore with AI-powered itineraries, 100+ curated places, 8 local guides, and personalised recommendations. Works offline. Free on iOS.'
+  title = 'Explore Singapore — AI Trip Planner | 100+ Curated Places, Guides & Itineraries',
+  description = 'Plan your perfect Singapore trip with our free AI-powered planner. 100+ curated places, interactive maps, personalised itineraries, and local guides — right in your browser.'
 } = Astro.props;
 
 const siteUrl = 'https://exploresg.info';
@@ -24,7 +24,7 @@ const ogImage = `${siteUrl}/og-image.jpg`;
     <!-- Primary SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="Singapore travel app, AI itinerary Singapore, things to do Singapore, Singapore guide, hawker food Singapore, best cafes Singapore, tourist attractions Singapore, Singapore trip planner, offline travel app, Singapore tourism" />
+    <meta name="keywords" content="Singapore trip planner, AI itinerary Singapore, things to do Singapore, Singapore guide, hawker food Singapore, best cafes Singapore, tourist attractions Singapore, plan Singapore trip online, Singapore tourism, free travel planner" />
     <meta name="author" content="Explore Singapore" />
     <link rel="canonical" href={siteUrl} />
 
@@ -55,8 +55,7 @@ const ogImage = `${siteUrl}/og-image.jpg`;
     <meta http-equiv="content-language" content="en-sg" />
     <link rel="alternate" hreflang="en" href={siteUrl} />
 
-    <!-- Mobile App Meta -->
-    <meta name="apple-itunes-app" content="app-id=6778833940" />
+    <!-- App Meta -->
     <meta name="application-name" content="Explore Singapore" />
 
     <!-- Favicon -->
@@ -68,23 +67,19 @@ const ogImage = `${siteUrl}/og-image.jpg`;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-    <!-- Structured Data — Organization -->
+    <!-- Structured Data — WebApplication -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "MobileApplication",
+      "@type": "WebApplication",
       "name": "Explore Singapore",
-      "operatingSystem": "iOS",
+      "url": "https://app.exploresg.info",
       "applicationCategory": "TravelApplication",
+      "browserRequirements": "Requires a modern web browser",
       "description": description,
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "SGD"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "4.8",
-        "ratingCount": "50"
       }
     })} />
 
@@ -114,34 +109,34 @@ const ogImage = `${siteUrl}/og-image.jpg`;
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is the best travel app for Singapore?",
+          "name": "What is Explore Singapore?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Explore Singapore is an AI-powered travel app featuring 100+ curated places, 8 themed guides, personalised itineraries, and offline support. It helps tourists discover hawker food, cafes, nightlife, beaches, and hidden gems."
+            "text": "Explore Singapore is a free AI-powered trip planner that helps you discover 100+ curated places, plan personalised itineraries, and explore interactive maps — all in your browser with no sign-up required."
           }
         },
         {
           "@type": "Question",
-          "name": "Does Explore Singapore work offline?",
+          "name": "Is Explore Singapore free to use?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, Explore Singapore works 100% offline. All places, guides, and saved itineraries are cached locally so you can explore without WiFi or mobile data."
+            "text": "Yes, Explore Singapore is completely free. No account, no sign-up, no hidden fees — just open the website and start planning your trip."
           }
         },
         {
           "@type": "Question",
-          "name": "How does the AI itinerary generator work?",
+          "name": "How does the AI trip planner work?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Tell the app your interests (food, culture, nature), number of days, budget, and travel style. The AI generates a personalised day-by-day itinerary with timings, routes, and restaurant recommendations."
+            "text": "Tell us your interests (food, culture, nature), how many days you have, and your budget. The AI generates a personalised day-by-day itinerary with timings, routes, and restaurant recommendations that you can customise."
           }
         },
         {
           "@type": "Question",
-          "name": "Is Explore Singapore free?",
+          "name": "Do I need to create an account?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, Explore Singapore is free to download on iOS via TestFlight. No account required — just open and start exploring."
+            "text": "No. Explore Singapore works instantly in your browser — no downloads, no sign-ups. Your itinerary is saved locally so you can come back anytime."
           }
         }
       ]
