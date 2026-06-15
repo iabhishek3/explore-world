@@ -33,8 +33,8 @@ export default function FilterBar({ active, onChange, collapsed }: Props) {
   }
 
   return (
-    <div className="flex items-center justify-center py-5">
-      <div className={`relative inline-flex items-center rounded-full border no-scrollbar transition-all duration-300 ${collapsed ? 'gap-0 px-2 py-1.5 overflow-visible bg-white/70 backdrop-blur-md border-zinc-200/50 shadow-sm' : 'gap-1 px-3 py-2 overflow-x-auto bg-white border-zinc-200 shadow-sm'}`}>
+    <div className="flex items-center justify-center py-5 overflow-x-auto no-scrollbar">
+      <div className={`relative inline-flex items-center rounded-full border no-scrollbar transition-all duration-300 max-w-full ${collapsed ? 'gap-0 px-2 py-1.5 overflow-visible bg-white/70 backdrop-blur-md border-zinc-200/50 shadow-sm' : 'gap-1 px-3 py-2 overflow-x-auto bg-white border-zinc-200 shadow-sm'}`}>
         {ALL_CATEGORIES.map(cat => {
           const isActive = active.includes(cat);
           return (

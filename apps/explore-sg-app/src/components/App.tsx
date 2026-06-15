@@ -78,7 +78,7 @@ export default function App({ places }: AppProps) {
       {/* Header */}
       <header className="shrink-0 h-16 border-b border-zinc-100 px-6">
         <div className="max-w-[1600px] mx-auto h-full flex items-center justify-between">
-        <span className="text-[15px] tracking-tight text-zinc-900">Explore <strong className="font-extrabold text-[#EF3340]">Singapore</strong></span>
+        <span className="text-[19px] tracking-tight text-zinc-900">Explore <strong className="font-extrabold text-[#EF3340]">Singapore</strong></span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowItinerary(!showItinerary)}
