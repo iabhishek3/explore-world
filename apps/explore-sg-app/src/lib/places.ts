@@ -48,6 +48,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   culture: '#8b5cf6',
   shopping: '#ec4899',
   nightlife: '#a855f7',
+  arts: '#06b6d4',
+  architecture: '#64748b',
+  neighbourhood: '#14b8a6',
+  attractions: '#eab308',
 };
 
 export const CATEGORY_LABELS: Record<string, string> = {
@@ -56,4 +60,8 @@ export const CATEGORY_LABELS: Record<string, string> = {
   culture: 'Culture',
   shopping: 'Shopping',
   nightlife: 'Nightlife',
+  arts: 'Arts',
+  architecture: 'Architecture',
+  neighbourhood: 'Neighbourhood',
+  attractions: 'Attractions',
 };

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Category, Place, ItineraryDay } from '../types';
-import { PLACES } from '../lib/places';
 import FilterBar from './FilterBar';
 import ViewToggle from './ViewToggle';
 import MapView from './MapView';
 import GridView from './GridView';
 import Itinerary from './Itinerary';
+
+interface AppProps {
+  places: Place[];
+}
 
 const STORAGE_KEY = 'exploresg-itinerary';
 
@@ -18,18 +21,20 @@ function loadItinerary(): ItineraryDay[] {
   return [{ id: '1', label: 'Day 1', places: [] }];
 }
 
-export default function App() {
+export default function App({ places }: AppProps) {
   const [showMap, setShowMap] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<Category[]>(['food', 'nature', 'culture', 'shopping', 'nightlife']);
+  const [activeFilters, setActiveFilters] = useState<Category[]>(['food', 'nature', 'culture', 'shopping', 'nightlife', 'arts', 'architecture', 'neighbourhood', 'attractions']);
   const [days, setDays] = useState<ItineraryDay[]>(loadItinerary);
   const [showItinerary, setShowItinerary] = useState(false);
   const [focusPlace, setFocusPlace] = useState<Place | null>(null);
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const lastScrollY = useRef(0);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
   }, [days]);
 
-  const filteredPlaces = PLACES.filter(p => activeFilters.includes(p.category));
+  const filteredPlaces = places.filter(p => activeFilters.includes(p.category));
   const tripPlaceIds = new Set(days.flatMap(d => d.places.map(p => p.id)));
 
   const addToTrip = useCallback((place: Place) => {
@@ -57,18 +62,23 @@ export default function App() {
     }
   }, [activeFilters]);
 
+  const handleGridScroll = useCallback((scrollTop: number) => {
+    if (scrollTop > lastScrollY.current && scrollTop > 50) {
+      setFiltersCollapsed(true);
+    } else if (scrollTop < lastScrollY.current) {
+      setFiltersCollapsed(false);
+    }
+    lastScrollY.current = scrollTop;
+  }, []);
+
   const totalPlaces = days.reduce((sum, d) => sum + d.places.length, 0);
 
   return (
     <div className="flex flex-col h-screen bg-white text-zinc-900">
       {/* Header */}
-      <header className="shrink-0 h-16 flex items-center justify-between px-6 border-b border-zinc-100">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-b from-red-500 to-red-600 flex items-center justify-center">
-            <span className="text-[10px] font-bold text-white">SG</span>
-          </div>
-          <span className="text-[15px] font-semibold text-zinc-900 tracking-tight">Explore Singapore</span>
-        </div>
+      <header className="shrink-0 h-16 border-b border-zinc-100 px-6">
+        <div className="max-w-[1600px] mx-auto h-full flex items-center justify-between">
+        <span className="text-[15px] tracking-tight text-zinc-900">Explore <strong className="font-extrabold text-[#EF3340]">Singapore</strong></span>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowItinerary(!showItinerary)}
@@ -93,24 +103,24 @@ export default function App() {
             <span className="hidden md:inline">AI Planner</span>
           </button>
         </div>
-      </header>
-
-      {/* Filter Bar */}
-      <div className="shrink-0 border-b border-zinc-100 px-6">
-        <div className="max-w-[1600px] mx-auto">
-          <FilterBar active={activeFilters} onChange={setActiveFilters} />
         </div>
-      </div>
+      </header>
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Desktop: split view. Mobile: full grid or full map */}
 
         {/* Grid */}
-        <div className={`overflow-hidden transition-all duration-300 ${
+        <div className={`overflow-hidden relative transition-all duration-300 ${
           showMap ? 'hidden md:block md:w-1/2 md:border-r md:border-zinc-100' : 'flex-1'
         }`}>
-          <GridView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} compact={showMap} onPlaceFocus={showMap ? (place) => setFocusPlace(place) : undefined} />
+          {/* Floating Filter Bar */}
+          <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none px-6">
+            <div className="pointer-events-auto flex justify-center">
+              <FilterBar active={activeFilters} onChange={setActiveFilters} collapsed={filtersCollapsed || showMap} />
+            </div>
+          </div>
+          <GridView places={filteredPlaces} onAdd={addToTrip} onRemove={removeFromTrip} tripPlaceIds={tripPlaceIds} compact={showMap} onPlaceFocus={showMap ? (place) => setFocusPlace(place) : undefined} onScroll={handleGridScroll} />
         </div>
 
         {/* Map */}

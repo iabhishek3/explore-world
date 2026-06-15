@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Place } from '../types';
 import { CATEGORY_COLORS, CATEGORY_LABELS } from '../lib/places';
+import { MapPin } from 'lucide-react';
 
 interface Props {
   places: Place[];
@@ -9,9 +10,10 @@ interface Props {
   tripPlaceIds: Set<string>;
   compact?: boolean;
   onPlaceFocus?: (place: Place) => void;
+  onScroll?: (scrollTop: number) => void;
 }
 
-export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compact, onPlaceFocus }: Props) {
+export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compact, onPlaceFocus, onScroll }: Props) {
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
 
   if (places.length === 0) {
@@ -24,7 +26,7 @@ export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compac
 
   return (
     <>
-      <div className="overflow-y-auto h-full px-6 pt-5 pb-10">
+      <div className="overflow-y-auto h-full px-6 pt-24 pb-10" onScroll={onScroll ? (e) => onScroll((e.target as HTMLDivElement).scrollTop) : undefined}>
         <div className={`max-w-[1600px] mx-auto grid gap-x-6 gap-y-10 ${compact ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
           {places.map(place => (
             <PlaceItem
@@ -56,12 +58,18 @@ export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compac
 function PlaceItem({ place, onAdd, onRemove, isInTrip, onClick }: { place: Place; onAdd: (p: Place) => void; onRemove: (p: Place) => void; isInTrip: boolean; onClick: () => void }) {
   return (
     <div className="group cursor-pointer" onClick={onClick}>
-      <div className="relative aspect-[4/3] rounded-[12px] overflow-hidden mb-3">
-        <img
-          src={place.image_url}
-          alt={place.name}
-          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-        />
+      <div className="relative aspect-[4/3] rounded-[12px] overflow-hidden mb-3 bg-zinc-100">
+        {place.image_url ? (
+          <img
+            src={place.image_url}
+            alt={place.name}
+            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-zinc-300 text-3xl">
+            <MapPin size={32} />
+          </div>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); isInTrip ? onRemove(place) : onAdd(place); }}
           className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 ${

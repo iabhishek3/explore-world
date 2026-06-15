@@ -2,8 +2,47 @@
 import Layout from '../layouts/Layout.astro';
 import App from '../components/App';
 import '../styles/global.css';
+import { supabase } from '../lib/supabase';
+import type { Place, Category } from '../types';
+
+const TAG_TO_CATEGORY: Record<string, Category> = {
+  'Food': 'food',
+  'Nature': 'nature',
+  'Culture': 'culture',
+  'Shopping': 'shopping',
+  'Nightlife': 'nightlife',
+  'Arts': 'arts',
+  'Architecture': 'architecture',
+  'Neighbourhood': 'neighbourhood',
+  'Attractions': 'attractions',
+};
+
+const { data: rawPlaces } = await supabase
+  .from('places')
+  .select('id, name, image_url, rating, tags, address, latitude, longitude, overview')
+  .order('rating', { ascending: false });
+
+const places: Place[] = (rawPlaces ?? []).map(p => {
+  const category = (p.tags ?? []).reduce<Category | null>((acc, tag) => {
+    if (acc) return acc;
+    return TAG_TO_CATEGORY[tag] ?? null;
+  }, null) ?? 'culture';
+
+  return {
+    id: String(p.id),
+    name: p.name,
+    image_url: p.image_url ?? '',
+    rating: p.rating ?? 0,
+    tags: p.tags ?? [],
+    address: p.address ?? '',
+    category,
+    latitude: p.latitude ?? 0,
+    longitude: p.longitude ?? 0,
+    description: p.overview ?? '',
+  };
+});
 ---
 
 <Layout title="Explore Singapore — Plan Your Trip">
-  <App client:load />
+  <App client:load places={places} />
 </Layout>

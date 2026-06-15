@@ -1,4 +1,4 @@
-export type Category = 'food' | 'nature' | 'culture' | 'shopping' | 'nightlife';
+export type Category = 'food' | 'nature' | 'culture' | 'shopping' | 'nightlife' | 'arts' | 'architecture' | 'neighbourhood' | 'attractions';
 
 export interface Place {
   id: string;
