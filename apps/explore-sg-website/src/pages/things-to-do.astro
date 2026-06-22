@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 
 const { data: places } = await supabase
   .from('places')
-  .select('id, name, image_url, tags, rating')
+  .select('id, name, slug, image_url, tags, rating')
   .order('rating', { ascending: false })
   .limit(60);
 
@@ -110,7 +110,7 @@ places?.forEach(place => {
       <div class="max-w-[1200px] mx-auto px-6 mt-10">
         <div class="grid grid-cols-3 md:grid-cols-6 gap-2 rounded-xl overflow-hidden">
           {places.filter(p => p.image_url).slice(0, 6).map((p) => (
-            <a href={`/places/${p.id}`} class="aspect-square bg-[#f5f5f5] overflow-hidden relative group">
+            <a href={`/places/${p.slug}`} class="aspect-square bg-[#f5f5f5] overflow-hidden relative group">
               <img src={p.image_url} alt={p.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
               <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
                 <span class="text-white text-[10px] font-medium leading-tight">{p.name}</span>

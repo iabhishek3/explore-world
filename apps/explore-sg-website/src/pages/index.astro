@@ -9,7 +9,7 @@ const { data: recommendations } = await supabase
 
 const { data: featuredPlaces } = await supabase
   .from('places')
-  .select('id, name, image_url, rating, tags, address')
+  .select('id, name, slug, image_url, rating, tags, address')
   .eq('is_featured', true)
   .limit(6);
 
@@ -338,7 +338,7 @@ const guidesCount = recommendations?.length ?? 0;
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredPlaces.map((place) => (
-            <a href={`/places/${place.id}`} class="group block rounded-2xl overflow-hidden border border-[#eaeaea] hover:border-[#ddd] hover:shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-all bg-white">
+            <a href={`/places/${place.slug}`} class="group block rounded-2xl overflow-hidden border border-[#eaeaea] hover:border-[#ddd] hover:shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-all bg-white">
               <div class="aspect-[16/10] bg-[#f5f5f5] overflow-hidden">
                 {place.image_url ? (
                   <img src={place.image_url} alt={place.name} class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
