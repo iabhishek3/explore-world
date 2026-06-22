@@ -2,13 +2,13 @@
 import Layout from '../../layouts/Layout.astro';
 import { supabase } from '../../lib/supabase';
 
-const { id } = Astro.params;
+const { slug } = Astro.params;
 
 // Fetch this guide with all its items
 const { data: guide } = await supabase
   .from('recommendations')
   .select('*, recommendation_items(*)')
-  .eq('id', id)
+  .eq('slug', slug)
   .single();
 
 if (!guide) {
@@ -18,13 +18,13 @@ if (!guide) {
 // Fetch all guides for sidebar navigation
 const { data: allGuides } = await supabase
   .from('recommendations')
-  .select('id, headline, tag, recommendation_items(count)')
+  .select('id, slug, headline, tag, recommendation_items(count)')
   .order('sort_order');
 
 const itemCount = guide.recommendation_items?.length ?? 0;
 ---
 
-<Layout title={`${guide.headline} — Singapore Guide 2026 | Explore Singapore`} description={guide.description?.slice(0, 155) || `${guide.headline} — curated local recommendations for Singapore. Verified places with addresses and tips.`} ogImage={guide.image_url || '/og-image.jpg'} canonical={`https://exploresg.info/guides/${guide.id}`} type="article">
+<Layout title={`${guide.headline} — Singapore Guide 2026 | Explore Singapore`} description={guide.description?.slice(0, 155) || `${guide.headline} — curated local recommendations for Singapore. Verified places with addresses and tips.`} ogImage={guide.image_url || '/og-image.jpg'} canonical={`https://exploresg.info/guides/${guide.slug}`} type="article">
   <main>
 
   <!-- Nav -->
@@ -249,7 +249,7 @@ const itemCount = guide.recommendation_items?.length ?? 0;
                 {allGuides?.filter(g => g.id !== guide.id).map((g) => {
                   const count = g.recommendation_items?.[0]?.count ?? 0;
                   return (
-                    <a href={`/guides/${g.id}`} class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#f8f8f8] transition-colors">
+                    <a href={`/guides/${g.slug}`} class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#f8f8f8] transition-colors">
                       <p class="text-[13px] font-medium text-[#1a1a1a] truncate">{g.headline}</p>
                       <span class="text-[11px] text-[#999] shrink-0 ml-2">{count}</span>
                     </a>

@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 
 const { data: guides } = await supabase
   .from('recommendations')
-  .select('id, headline, tag, subtitle, description, image_url, recommendation_items(count)')
+  .select('id, slug, headline, tag, subtitle, description, image_url, recommendation_items(count)')
   .order('sort_order');
 
 ---
@@ -107,7 +107,7 @@ const { data: guides } = await supabase
         {guides?.map((guide) => {
           const count = guide.recommendation_items?.[0]?.count ?? 0;
           return (
-            <a href={`/guides/${guide.id}`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-[#eaeaea] hover:border-[#ddd] hover:shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-all">
+            <a href={`/guides/${guide.slug}`} class="group flex flex-col bg-white rounded-2xl overflow-hidden border border-[#eaeaea] hover:border-[#ddd] hover:shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-all">
               {guide.image_url && (
                 <div class="aspect-[21/9] bg-[#f5f5f5] overflow-hidden">
                   <img src={guide.image_url} alt={guide.headline} class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />

@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 export const GET: APIRoute = async () => {
   const [placesResult, guidesResult] = await Promise.all([
     supabase.from('places').select('id, slug'),
-    supabase.from('recommendations').select('id'),
+    supabase.from('recommendations').select('id, slug'),
   ]);
 
   const places = placesResult.data ?? [];
@@ -28,7 +28,7 @@ export const GET: APIRoute = async () => {
   }));
 
   const guidePages = guides.map((guide) => ({
-    url: `https://exploresg.info/guides/${guide.id}`,
+    url: `https://exploresg.info/guides/${guide.slug}`,
     priority: '0.7',
     changefreq: 'weekly',
   }));
