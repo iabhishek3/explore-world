@@ -53,9 +53,16 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.latitud
       "ratingCount": "50"
     } : undefined,
     "openingHours": place.opening_hours || undefined,
-    "url": place.external_link || `https://exploresg.info/places/${place.id}`,
-    "isAccessibleForFree": true,
-    "touristType": place.tags || []
+    "url": place.external_link || `https://exploresg.info/places/${place.slug}`,
+    "isAccessibleForFree": place.cost === 'Free' || place.cost?.startsWith('Free'),
+    "touristType": place.best_for || place.tags || [],
+    "publicAccess": true,
+    "additionalProperty": [
+      place.nearest_mrt ? { "@type": "PropertyValue", "name": "Nearest MRT", "value": place.nearest_mrt } : null,
+      place.best_time ? { "@type": "PropertyValue", "name": "Best Time to Visit", "value": place.best_time } : null,
+      place.duration ? { "@type": "PropertyValue", "name": "Suggested Duration", "value": place.duration } : null,
+      place.cost ? { "@type": "PropertyValue", "name": "Cost", "value": place.cost } : null,
+    ].filter(Boolean)
   })} />
   <main>
 
@@ -197,6 +204,49 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.latitud
             <div class="mt-8 pb-8 border-b border-[#f0f0f0]">
               <h2 class="text-[16px] font-bold text-[#1a1a1a] mb-3">Opening Hours</h2>
               <p class="text-[15px] text-[#555] leading-[1.75]">{place.opening_hours}</p>
+            </div>
+          )}
+
+          <!-- Quick Info -->
+          {(place.best_for || place.nearest_mrt || place.best_time || place.duration || place.cost) && (
+            <div class="mt-8 pb-8 border-b border-[#f0f0f0]">
+              <h2 class="text-[16px] font-bold text-[#1a1a1a] mb-4">Quick Info</h2>
+              <div class="grid grid-cols-2 gap-4">
+                {place.nearest_mrt && (
+                  <div>
+                    <p class="text-[12px] text-[#999] mb-0.5">Nearest MRT</p>
+                    <p class="text-[14px] font-medium text-[#1a1a1a]">{place.nearest_mrt}</p>
+                  </div>
+                )}
+                {place.best_time && (
+                  <div>
+                    <p class="text-[12px] text-[#999] mb-0.5">Best Time to Visit</p>
+                    <p class="text-[14px] font-medium text-[#1a1a1a]">{place.best_time}</p>
+                  </div>
+                )}
+                {place.duration && (
+                  <div>
+                    <p class="text-[12px] text-[#999] mb-0.5">Duration</p>
+                    <p class="text-[14px] font-medium text-[#1a1a1a]">{place.duration}</p>
+                  </div>
+                )}
+                {place.cost && (
+                  <div>
+                    <p class="text-[12px] text-[#999] mb-0.5">Cost</p>
+                    <p class="text-[14px] font-medium text-[#1a1a1a]">{place.cost}</p>
+                  </div>
+                )}
+              </div>
+              {place.best_for && place.best_for.length > 0 && (
+                <div class="mt-4">
+                  <p class="text-[12px] text-[#999] mb-2">Best For</p>
+                  <div class="flex flex-wrap gap-2">
+                    {place.best_for.map((tag: string) => (
+                      <span class="text-[12px] font-medium text-[#555] bg-[#f5f5f5] px-3 py-1 rounded-full">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
