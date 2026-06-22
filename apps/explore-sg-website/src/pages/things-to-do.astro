@@ -1,0 +1,533 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { supabase } from '../lib/supabase';
+
+const { data: places } = await supabase
+  .from('places')
+  .select('id, name, image_url, tags, rating')
+  .order('rating', { ascending: false })
+  .limit(60);
+
+// Group places by their first tag
+const placesByTag: Record<string, any[]> = {};
+places?.forEach(place => {
+  const tag = place.tags?.[0];
+  if (tag) {
+    if (!placesByTag[tag]) placesByTag[tag] = [];
+    placesByTag[tag]!.push(place);
+  }
+});
+---
+
+<Layout title="50+ Things to Do in Singapore (2026) — Activities, Attractions & Hidden Gems" description="The ultimate list of things to do in Singapore. Top attractions, hidden gems, best food, outdoor activities, nightlife, and free things to do — curated by locals.">
+  <main>
+
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#f0f0f0]">
+    <div class="max-w-[1200px] mx-auto px-6 h-[64px] flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+        </div>
+        <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-1">
+          <button id="discover-trigger" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            Discover
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 256 256" fill="currentColor" class="mt-px transition-transform" id="discover-chevron"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+          </button>
+          <a href="/guides" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">Guides</a>
+          <a href="/about" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="https://app.exploresg.info" class="text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Open Planner
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#f5f5f5] transition-colors" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Full-width Submenu -->
+    <div id="discover-panel" class="hidden bg-white border-t border-[#f0f0f0]">
+      <div class="max-w-[1200px] mx-auto px-6 py-6">
+        <div class="grid grid-cols-3 gap-6">
+          <a href="/places" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Places to Visit</p>
+              <p class="text-[13px] text-[#888] mt-0.5">100+ curated spots across Singapore</p>
+            </div>
+          </a>
+          <a href="/things-to-do" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Things to Do</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Activities, attractions & hidden gems</p>
+            </div>
+          </a>
+          <a href="/singapore-itinerary" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM80,80A8,8,0,0,1,88,72h24a8,8,0,0,1,0,16H88A8,8,0,0,1,80,80Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,128Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,176Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">3-Day Itinerary</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Ready-made day-by-day plan</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-1">
+      <a href="/places" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Places</a>
+      <a href="/guides" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Guides</a>
+      <a href="/about" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">About</a>
+      <div class="pt-3">
+        <a href="https://app.exploresg.info" class="block text-center text-[14px] font-semibold text-white bg-[#1a1a1a] py-3 rounded-xl">Plan Your Trip</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="pt-12 pb-10 md:pt-16 md:pb-14">
+    <div class="max-w-[800px] mx-auto px-6">
+      <h1 class="text-[2rem] md:text-[2.5rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]">
+        Things to Do in Singapore
+      </h1>
+      <p class="mt-4 text-[16px] text-[#666] leading-relaxed max-w-[640px]">
+        The only list you need. Curated by locals, updated for 2026. From hawker food to hidden rooftops, nature trails to night markets — here's what's actually worth your time.
+      </p>
+    </div>
+
+    <!-- Photo strip -->
+    {places && places.length > 0 && (
+      <div class="max-w-[1200px] mx-auto px-6 mt-10">
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-2 rounded-xl overflow-hidden">
+          {places.filter(p => p.image_url).slice(0, 6).map((p) => (
+            <a href={`/places/${p.id}`} class="aspect-square bg-[#f5f5f5] overflow-hidden relative group">
+              <img src={p.image_url} alt={p.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                <span class="text-white text-[10px] font-medium leading-tight">{p.name}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+  </section>
+
+  <!-- Content -->
+  <section class="pb-16">
+    <div class="max-w-[800px] mx-auto px-6">
+
+      <!-- Food & Hawker Centres -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Best Food & Hawker Centres</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          Singapore's food scene is world-class and shockingly affordable. A Michelin-starred meal can cost S$5 at a hawker stall. Here's where to eat.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Maxwell Food Centre</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The most famous hawker centre for good reason. Tian Tian Chicken Rice is legendary, but also try Zhen Zhen Porridge and the rojak stall near the back. Go at 11 AM to beat the lunch rush.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Old Airport Road Food Centre</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Locals' favourite — over 150 stalls and barely any tourists. The fried Hokkien mee, wonton noodles, and ice kachang here are all exceptional. Harder to get to but worth the trip.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Tekka Centre, Little India</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The best Indian food outside of India, arguably. Try the fish head curry, thosai, or biryani. The wet market downstairs is chaotic and wonderful — fresh spices, flowers, and produce.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Lau Pa Sat</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A Victorian-era market building in the CBD. Come after 7 PM when Boon Tat Street closes to traffic and the satay stalls fire up. Great atmosphere with the city towers lit up around you.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Tiong Bahru Market</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              In Singapore's trendiest old neighbourhood. The chwee kueh (steamed rice cakes with preserved radish) here is a must-try breakfast. Upstairs is the hawker centre; downstairs is the wet market.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Jalan Besar Neighbourhood Eats</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A cluster of excellent restaurants and cafes along a single street — Swee Choon for late-night dim sum, Bergs for burgers, and a string of craft beer bars. The new foodie neighbourhood locals love.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nature & Outdoor -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Nature & Outdoor Activities</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          Singapore is far greener than most visitors expect. Nearly half the island is covered in greenery, and the nature here is genuinely world-class.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Gardens by the Bay</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The Supertree Grove is free and spectacular at night when they light up. The Cloud Forest conservatory is worth the entry fee — a 35-metre indoor waterfall and cloud-level walkways. Go early morning or after 6 PM.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">MacRitchie Reservoir & TreeTop Walk</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A proper jungle hike in the middle of the city. The TreeTop Walk is a 250-metre suspension bridge at canopy level. The full loop trail is about 11 km — bring water and start before 9 AM.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Singapore Botanic Gardens</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              UNESCO World Heritage Site, completely free. 82 hectares of manicured gardens and primary rainforest. The National Orchid Garden (S$5) has over 1,000 orchid species. Perfect for a morning walk.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Pulau Ubin</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A rustic island off the northeast coast — feels like stepping back 50 years. S$4 bumboat ride from Changi Point, then rent a bike and explore kampong trails, mangroves, and quarry lakes. A genuine hidden gem.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">East Coast Park</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              15 km of coastline with cycling paths, BBQ pits, and seafood restaurants. Rent bikes, kayak, or just walk along the beach watching planes land at Changi. Best at golden hour.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Southern Ridges Walk</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A 10 km elevated trail connecting Mount Faber to Kent Ridge. Henderson Waves bridge is the highlight — a sculptural wooden wave 36 metres above the forest. Completely free and rarely crowded.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cultural Attractions -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Cultural Attractions</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          Four major cultures in one tiny island. Singapore's ethnic neighbourhoods each have a completely distinct personality, architecture, and food scene.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">National Gallery Singapore</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The world's largest public collection of Southeast Asian art, housed in two beautifully restored colonial buildings. Free admission for Singapore residents; S$20 for tourists. The rooftop bar has incredible city views.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Chinatown Heritage Centre</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Walk through recreated shophouse interiors from the 1950s. It's small but deeply moving — gives real context to the neighbourhood you're walking through. Budget 45 minutes.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Kampong Glam & Sultan Mosque</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The historic Malay-Arab quarter. The Sultan Mosque's gold dome against colourful shophouses is iconic. Explore Haji Lane for street art and indie shops, then get a Turkish coffee at one of the lane's cafes.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Little India</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The most sensory-overload neighbourhood in Singapore. Flower garlands, spice shops, Bollywood music, and the smell of fresh roti. Best experienced on a Sunday when it's at its most vibrant.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Peranakan Museum & Joo Chiat</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Learn about the Peranakan (Straits Chinese) culture unique to Southeast Asia. Then walk through Joo Chiat and Katong to see the colourful Peranakan terrace houses in person. Great laksa shops in this area too.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">ArtScience Museum</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The lotus-shaped building at Marina Bay Sands. Their permanent "Future World" exhibit is an immersive digital art experience that appeals to all ages. About 90 minutes to see everything.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shopping & Markets -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Shopping & Markets</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          From luxury malls to vintage markets, Singapore caters to every shopping style. The best finds are usually off the main tourist track.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Orchard Road</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Singapore's main shopping belt. ION Orchard for luxury, Takashimaya for Japanese department store vibes, and Design Orchard for local Singaporean brands and souvenirs that aren't tacky.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Haji Lane</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The narrowest street in Singapore, packed with indie boutiques, vintage shops, and street art. Great for unique souvenirs and one-of-a-kind fashion finds. Best combined with Kampong Glam exploration.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Bugis Street Market</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Affordable fashion, accessories, and souvenirs across hundreds of stalls. Not high-end, but fun for browsing and finding cheap buys. The food stalls around the edges are solid too.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">VivoCity & HarbourFront</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Singapore's largest mall, right next to the Sentosa gateway. Good mix of mid-range brands, a massive food court, and a rooftop pool area with harbour views. Combine with a Sentosa trip.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Mustafa Centre (24-hour)</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A 24-hour shopping experience in Little India that sells literally everything — electronics, gold, spices, groceries, luggage. Chaotic and overwhelming in the best way. Locals come here at 2 AM.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nightlife & Bars -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Nightlife & Bars</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          Singapore's bar scene punches well above its weight — multiple spots on the World's 50 Best Bars list. Drinks aren't cheap (S$18-25 for cocktails), but the quality is exceptional.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Atlas Bar</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              An Art Deco gin palace with a three-storey gin tower holding over 1,300 bottles. The interior alone is worth visiting. Dress smart-casual. Cocktails start around S$25.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Jigger & Pony</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Consistently ranked among Asia's best bars. Classic cocktails done perfectly in a refined but not stuffy space. The gimlet is their signature. Located in the Amara Hotel.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Clarke Quay</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The main nightlife strip along the river. More clubby and touristy than other options, but lively on weekends. Good for bar-hopping without planning. Zouk is the big-name club here.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Ann Siang Hill & Club Street</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Where locals actually drink. A quiet cluster of wine bars, cocktail spots, and rooftop terraces on a heritage shophouse street. Try Employees Only or Nutmeg & Clove for inventive cocktails.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">CE LA VI Rooftop (Marina Bay Sands)</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The iconic rooftop bar on top of MBS. Expensive (S$25+ cocktails) but the 57th-floor panoramic view is unmatched. Skip the SkyPark observation deck and come here for a drink instead — same view, better experience.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free Things to Do -->
+      <div class="mb-14">
+        <h2 class="text-[1.5rem] font-bold text-[#1a1a1a] mb-2">Free Things to Do</h2>
+        <p class="text-[15px] text-[#666] leading-relaxed mb-6">
+          Singapore has a reputation for being expensive, but there's a surprising amount you can do for free. Some of the city's best experiences don't cost a cent.
+        </p>
+
+        <div class="space-y-5">
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Spectra Light & Water Show</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A 15-minute light, water, and laser show at the Marina Bay Sands waterfront. Runs nightly at 8 PM and 9 PM (plus 10 PM on Fridays/Saturdays). Best viewed from the Event Plaza.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Supertree Grove Light Show</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              The Garden Rhapsody show at 7:45 PM and 8:45 PM nightly. Lie on the grass and watch the Supertrees come alive with light and music. Entirely free and genuinely magical.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Marina Barrage Rooftop</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A massive green rooftop with 360-degree views of the city skyline, Gardens by the Bay, and the sea. Popular for kite-flying and picnics. One of the best sunset spots in Singapore.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Heritage Neighbourhood Walks</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Wander through Chinatown, Little India, Kampong Glam, and Tiong Bahru without spending anything. The architecture, street art, and atmosphere are the attraction. Each neighbourhood takes 1-2 hours to explore on foot.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Changi Airport Jewel</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              Even if you're not flying, Jewel's 40-metre indoor waterfall (Rain Vortex) is free to view. The Shiseido Forest Valley walk is also free. Worth a visit on your last day since it's right at the airport.
+            </p>
+          </div>
+
+          <div class="border-l-2 border-[#f0f0f0] pl-5">
+            <h3 class="text-[16px] font-bold text-[#1a1a1a] mb-1">Fort Canning Park</h3>
+            <p class="text-[14px] text-[#666] leading-relaxed">
+              A hilltop park in the city centre with underground WWII bunkers, ancient archaeological sites, and the famous spiral staircase (popular for photos). Free entry and rarely crowded on weekday mornings.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="bg-[#fafafa] border border-[#eaeaea] rounded-2xl p-8 md:p-10 text-center mb-14">
+        <h2 class="text-[1.25rem] md:text-[1.5rem] font-bold text-[#1a1a1a] mb-3">
+          Plan your trip with all these places
+        </h2>
+        <p class="text-[15px] text-[#666] leading-relaxed max-w-[480px] mx-auto mb-6">
+          Add any of these spots to your itinerary, organize by day, and see everything on a map. Our free trip planner makes it easy to build the perfect Singapore schedule.
+        </p>
+        <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 bg-[#EF3340] text-white font-semibold px-7 py-3.5 rounded-full text-[15px] hover:bg-[#d62b36] transition-colors shadow-[0_2px_12px_rgba(239,51,64,0.25)]">
+          Open the Trip Planner
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69l-58.35-58.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+        </a>
+        <p class="mt-4 text-[13px] text-[#999]">Free forever. No sign-up required.</p>
+      </div>
+
+    </div>
+  </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#f0f0f0] pt-16 pb-8">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-8 pb-12">
+        <div class="md:col-span-5">
+          <a href="/" class="flex items-center gap-2 mb-4">
+            <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+          </a>
+          <p class="text-[14px] text-[#888] leading-relaxed max-w-[320px]">
+            Free AI-powered trip planner for Singapore. Curated places, local guides, and an interactive itinerary builder.
+          </p>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Product</p>
+          <ul class="space-y-3">
+            <li><a href="/places" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Places</a></li>
+            <li><a href="/guides" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Guides</a></li>
+            <li><a href="https://app.exploresg.info" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Open Planner</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Company</p>
+          <ul class="space-y-3">
+            <li><a href="/about" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">About</a></li>
+            <li><a href="/privacy" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Privacy</a></li>
+            <li><a href="/terms" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Terms</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-3">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Open the app</p>
+          <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Plan Your Trip
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69l-58.35-58.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="pt-8 border-t border-[#f0f0f0] flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-[13px] text-[#ccc]">&copy; 2026 Explore Singapore</p>
+        <p class="text-[13px] text-[#ccc]">Made in Singapore</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+    });
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    // Full-width submenu
+    const discoverTrigger = document.getElementById('discover-trigger');
+    const discoverPanel = document.getElementById('discover-panel');
+    const discoverChevron = document.getElementById('discover-chevron');
+    let panelTimeout;
+    let isOpen = false;
+
+    function openPanel() {
+      clearTimeout(panelTimeout);
+      discoverPanel?.classList.remove('hidden');
+      discoverPanel?.classList.add('animate-dropdown');
+      discoverChevron?.style.setProperty('transform', 'rotate(180deg)');
+      isOpen = true;
+    }
+
+    function closePanel() {
+      panelTimeout = setTimeout(() => {
+        discoverPanel?.classList.add('hidden');
+        discoverPanel?.classList.remove('animate-dropdown');
+        discoverChevron?.style.setProperty('transform', 'rotate(0deg)');
+        isOpen = false;
+      }, 100);
+    }
+
+    discoverTrigger?.addEventListener('mouseenter', openPanel);
+    discoverTrigger?.addEventListener('click', () => { isOpen ? closePanel() : openPanel(); });
+    discoverPanel?.addEventListener('mouseenter', () => clearTimeout(panelTimeout));
+    discoverPanel?.addEventListener('mouseleave', closePanel);
+    discoverTrigger?.addEventListener('mouseleave', closePanel);
+  </script>
+</Layout>

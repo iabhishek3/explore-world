@@ -1,0 +1,412 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+
+const { id } = Astro.params;
+
+const { data: place } = await supabase
+  .from('places')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+if (!place) {
+  return Astro.redirect('/');
+}
+
+// Get related places (same tag)
+const primaryTag = place.tags?.[0];
+const { data: relatedPlaces } = await supabase
+  .from('places')
+  .select('id, name, image_url, rating, tags, address')
+  .contains('tags', primaryTag ? [primaryTag] : [])
+  .neq('id', place.id)
+  .limit(3);
+
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}`;
+
+---
+
+<Layout title={`${place.name} — Things to Do in Singapore | Explore Singapore`} description={place.overview?.slice(0, 155) || `Visit ${place.name} in Singapore. Address, opening hours, rating, and Google Maps directions. Add to your free Singapore itinerary.`} ogImage={place.image_url || '/og-image.jpg'} canonical={`https://exploresg.info/places/${place.id}`} type="article">
+  <!-- Place structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "TouristAttraction",
+    "name": place.name,
+    "description": place.overview || `${place.name} in Singapore`,
+    "image": place.image_url,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": place.address,
+      "addressLocality": "Singapore",
+      "addressCountry": "SG"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": place.latitude,
+      "longitude": place.longitude
+    },
+    "aggregateRating": place.rating ? {
+      "@type": "AggregateRating",
+      "ratingValue": place.rating,
+      "bestRating": "5",
+      "ratingCount": "50"
+    } : undefined,
+    "openingHours": place.opening_hours || undefined,
+    "url": place.external_link || `https://exploresg.info/places/${place.id}`,
+    "isAccessibleForFree": true,
+    "touristType": place.tags || []
+  })} />
+  <main>
+
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#f0f0f0]">
+    <div class="max-w-[1200px] mx-auto px-6 h-[64px] flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+        </div>
+        <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-1">
+          <button id="discover-trigger" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            Discover
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 256 256" fill="currentColor" class="mt-px transition-transform" id="discover-chevron"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+          </button>
+          <a href="/guides" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">Guides</a>
+          <a href="/about" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="https://app.exploresg.info" class="text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Open Planner
+          </a>
+        </div>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#f5f5f5] transition-colors" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Full-width Submenu -->
+    <div id="discover-panel" class="hidden bg-white border-t border-[#f0f0f0]">
+      <div class="max-w-[1200px] mx-auto px-6 py-6">
+        <div class="grid grid-cols-3 gap-6">
+          <a href="/places" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Places to Visit</p>
+              <p class="text-[13px] text-[#888] mt-0.5">100+ curated spots across Singapore</p>
+            </div>
+          </a>
+          <a href="/things-to-do" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Things to Do</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Activities, attractions & hidden gems</p>
+            </div>
+          </a>
+          <a href="/singapore-itinerary" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM80,80A8,8,0,0,1,88,72h24a8,8,0,0,1,0,16H88A8,8,0,0,1,80,80Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,128Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,176Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">3-Day Itinerary</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Ready-made day-by-day plan</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-1">
+      <a href="/places" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Places</a>
+      <a href="/guides" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Guides</a>
+      <a href="/about" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">About</a>
+      <div class="pt-3">
+        <a href="https://app.exploresg.info" class="block text-center text-[14px] font-semibold text-white bg-[#1a1a1a] py-3 rounded-xl">Plan Your Trip</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Image -->
+  <section class="relative">
+    {place.image_url ? (
+      <div class="aspect-[21/9] md:aspect-[3/1] max-h-[420px] w-full bg-[#f5f5f5] overflow-hidden">
+        <img src={place.image_url} alt={place.name} class="w-full h-full object-cover" />
+      </div>
+    ) : (
+      <div class="h-[200px] bg-[#f5f5f5]"></div>
+    )}
+  </section>
+
+  <!-- Content -->
+  <section class="py-10 md:py-14">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-10 md:gap-14">
+        <!-- Main -->
+        <div class="md:col-span-7 lg:col-span-8">
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-2 text-[13px] text-[#999] mb-5">
+            <a href="/" class="hover:text-[#1a1a1a] transition-colors">Home</a>
+            <span>/</span>
+            <a href="/places" class="hover:text-[#1a1a1a] transition-colors">Places</a>
+            <span>/</span>
+            <span class="text-[#666] truncate">{place.name}</span>
+          </div>
+
+          <!-- Tags -->
+          {place.tags && place.tags.length > 0 && (
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              {place.tags.map((tag: string) => (
+                <span class="text-[12px] font-medium text-[#666] bg-[#f5f5f5] px-3 py-1 rounded-full">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <!-- Title -->
+          <h1 class="text-[2rem] md:text-[2.5rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]">
+            {place.name}
+          </h1>
+
+          <!-- Rating -->
+          <div class="flex items-center gap-3 mt-3">
+            <div class="flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#EF3340"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59.46-5.15,23.21-55.36a16.4,16.4,0,0,1,30.5,0l23.21,55.36L226.92,86a16.46,16.46,0,0,1,7.37,28.86Z"></path></svg>
+              <span class="text-[15px] font-semibold text-[#1a1a1a]">{place.rating}</span>
+            </div>
+            <span class="text-[14px] text-[#999]">rating</span>
+          </div>
+
+          <!-- Description -->
+          {place.overview && (
+            <div class="mt-8 pb-8 border-b border-[#f0f0f0]">
+              <h2 class="text-[16px] font-bold text-[#1a1a1a] mb-3">About</h2>
+              <p class="text-[15px] text-[#555] leading-[1.75]">{place.overview}</p>
+            </div>
+          )}
+
+          <!-- Opening Hours -->
+          {place.opening_hours && (
+            <div class="mt-8 pb-8 border-b border-[#f0f0f0]">
+              <h2 class="text-[16px] font-bold text-[#1a1a1a] mb-3">Opening Hours</h2>
+              <p class="text-[15px] text-[#555] leading-[1.75]">{place.opening_hours}</p>
+            </div>
+          )}
+
+          <!-- Add to trip CTA -->
+          <div class="mt-8">
+            <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 bg-[#EF3340] text-white font-semibold px-6 py-3.5 rounded-full text-[14px] hover:bg-[#d62b36] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+              Add to my trip
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="md:col-span-5 lg:col-span-4">
+          <div class="md:sticky md:top-[88px] space-y-5">
+            <!-- Info card -->
+            <div class="bg-[#fafafa] rounded-xl p-6 border border-[#eaeaea]">
+              <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wide mb-4">Details</p>
+
+              <!-- Address -->
+              {place.address && (
+                <div class="flex gap-3 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#999" class="shrink-0 mt-0.5"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+                  <div>
+                    <p class="text-[13px] text-[#999] mb-0.5">Address</p>
+                    <p class="text-[14px] text-[#1a1a1a]">{place.address}</p>
+                  </div>
+                </div>
+              )}
+
+              <!-- Rating -->
+              <div class="flex gap-3 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#999" class="shrink-0 mt-0.5"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59.46-5.15,23.21-55.36a16.4,16.4,0,0,1,30.5,0l23.21,55.36L226.92,86a16.46,16.46,0,0,1,7.37,28.86Z"></path></svg>
+                <div>
+                  <p class="text-[13px] text-[#999] mb-0.5">Rating</p>
+                  <p class="text-[14px] text-[#1a1a1a]">{place.rating} / 5</p>
+                </div>
+              </div>
+
+              <!-- Category -->
+              {place.tags?.[0] && (
+                <div class="flex gap-3 mb-4">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#999" class="shrink-0 mt-0.5"><path d="M243.31,136,144,36.69A15.86,15.86,0,0,0,132.69,32H40a8,8,0,0,0-8,8v92.69A15.86,15.86,0,0,0,36.69,144L136,243.31a16,16,0,0,0,22.63,0l84.68-84.68a16,16,0,0,0,0-22.63ZM80,96A16,16,0,1,1,96,80,16,16,0,0,1,80,96Z"></path></svg>
+                  <div>
+                    <p class="text-[13px] text-[#999] mb-0.5">Category</p>
+                    <p class="text-[14px] text-[#1a1a1a]">{place.tags.join(', ')}</p>
+                  </div>
+                </div>
+              )}
+
+              <!-- Divider -->
+              <div class="border-t border-[#eaeaea] my-4"></div>
+
+              <!-- Actions -->
+              <div class="space-y-2.5">
+                <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-lg bg-white border border-[#eaeaea] hover:border-[#ddd] transition-colors text-[14px] font-medium text-[#1a1a1a]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#059669"><path d="M228.92,49.69a8,8,0,0,0-6.86-1.45L160.93,63.52,99.58,32.84a8,8,0,0,0-5.52-.6l-64,16A8,8,0,0,0,24,56V200a8,8,0,0,0,9.94,7.76l61.13-15.28,61.35,30.68A8.15,8.15,0,0,0,160,224a8,8,0,0,0,1.94-.24l64-16A8,8,0,0,0,232,200V56A8,8,0,0,0,228.92,49.69Z"></path></svg>
+                  Open in Google Maps
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" fill="#999" class="ml-auto"><path d="M224,104a8,8,0,0,1-16,0V59.31l-66.34,66.35a8,8,0,0,1-11.32-11.32L196.69,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"></path></svg>
+                </a>
+
+                {place.external_link && (
+                  <a href={place.external_link} target="_blank" rel="noopener noreferrer" class="flex items-center gap-3 p-3 rounded-lg bg-white border border-[#eaeaea] hover:border-[#ddd] transition-colors text-[14px] font-medium text-[#1a1a1a]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="#2563EB"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM101.63,168h52.74C149,186.34,140,202.87,128,215.89,116,202.87,107,186.34,101.63,168ZM98,152a145.72,145.72,0,0,1,0-48h60a145.72,145.72,0,0,1,0,48ZM40,128a87.61,87.61,0,0,1,3.33-24H81.79a161.79,161.79,0,0,0,0,48H43.33A87.61,87.61,0,0,1,40,128Zm114.37-40H101.63C107,69.66,116,53.13,128,40.11,140,53.13,149,69.66,154.37,88Zm19.84,16h38.46a88.15,88.15,0,0,1,0,48H174.21a161.79,161.79,0,0,0,0-48Z"></path></svg>
+                    Visit official website
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" fill="#999" class="ml-auto"><path d="M224,104a8,8,0,0,1-16,0V59.31l-66.34,66.35a8,8,0,0,1-11.32-11.32L196.69,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"></path></svg>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <!-- Map -->
+            <div class="rounded-xl overflow-hidden border border-[#eaeaea] aspect-[4/3]">
+              <iframe
+                src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.longitude - 0.008},${place.latitude - 0.005},${place.longitude + 0.008},${place.latitude + 0.005}&layer=mapnik&marker=${place.latitude},${place.longitude}`}
+                class="w-full h-full border-0"
+                loading="lazy"
+                title={`Map showing ${place.name}`}
+              ></iframe>
+            </div>
+            <a href={mapsUrl} target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 mt-2 text-[12px] text-[#888] hover:text-[#1a1a1a] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M224,104a8,8,0,0,1-16,0V59.31l-66.34,66.35a8,8,0,0,1-11.32-11.32L196.69,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"></path></svg>
+              Open in Google Maps
+            </a>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Related Places -->
+      {relatedPlaces && relatedPlaces.length > 0 && (
+        <div class="mt-16 pt-12 border-t border-[#f0f0f0]">
+          <h2 class="text-[18px] font-bold text-[#1a1a1a] mb-6">Similar places you might like</h2>
+          <div class="grid md:grid-cols-3 gap-5">
+            {relatedPlaces.map((related) => (
+              <a href={`/places/${related.id}`} class="group rounded-xl overflow-hidden border border-[#eaeaea] hover:border-[#ddd] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all bg-white">
+                <div class="aspect-[16/10] bg-[#f5f5f5] overflow-hidden">
+                  {related.image_url ? (
+                    <img src={related.image_url} alt={related.name} class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" loading="lazy" />
+                  ) : (
+                    <div class="w-full h-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="#d4d4d4"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+                    </div>
+                  )}
+                </div>
+                <div class="p-4">
+                  <h3 class="font-bold text-[14px] text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">{related.name}</h3>
+                  <div class="flex items-center gap-2 mt-1.5">
+                    <span class="flex items-center gap-1 text-[12px] text-[#888]">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256" fill="#EF3340"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59.46-5.15,23.21-55.36a16.4,16.4,0,0,1,30.5,0l23.21,55.36L226.92,86a16.46,16.46,0,0,1,7.37,28.86Z"></path></svg>
+                      {related.rating}
+                    </span>
+                    {related.tags?.[0] && (
+                      <span class="text-[11px] text-[#999]">{related.tags[0]}</span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#f0f0f0] pt-16 pb-8">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-8 pb-12">
+        <div class="md:col-span-5">
+          <a href="/" class="flex items-center gap-2 mb-4">
+            <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+          </a>
+          <p class="text-[14px] text-[#888] leading-relaxed max-w-[320px]">
+            Free AI-powered trip planner for Singapore. Curated places, local guides, and an interactive itinerary builder.
+          </p>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Product</p>
+          <ul class="space-y-3">
+            <li><a href="/places" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Places</a></li>
+            <li><a href="/guides" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Guides</a></li>
+            <li><a href="https://app.exploresg.info" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Open Planner</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Company</p>
+          <ul class="space-y-3">
+            <li><a href="/about" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">About</a></li>
+            <li><a href="/privacy" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Privacy</a></li>
+            <li><a href="/terms" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Terms</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-3">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Open the app</p>
+          <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Plan Your Trip
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69l-58.35-58.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="pt-8 border-t border-[#f0f0f0] flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-[13px] text-[#ccc]">&copy; 2026 Explore Singapore</p>
+        <p class="text-[13px] text-[#ccc]">Made in Singapore</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+    });
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    // Full-width submenu
+    const discoverTrigger = document.getElementById('discover-trigger');
+    const discoverPanel = document.getElementById('discover-panel');
+    const discoverChevron = document.getElementById('discover-chevron');
+    let panelTimeout;
+    let isOpen = false;
+
+    function openPanel() {
+      clearTimeout(panelTimeout);
+      discoverPanel?.classList.remove('hidden');
+      discoverPanel?.classList.add('animate-dropdown');
+      discoverChevron?.style.setProperty('transform', 'rotate(180deg)');
+      isOpen = true;
+    }
+
+    function closePanel() {
+      panelTimeout = setTimeout(() => {
+        discoverPanel?.classList.add('hidden');
+        discoverPanel?.classList.remove('animate-dropdown');
+        discoverChevron?.style.setProperty('transform', 'rotate(0deg)');
+        isOpen = false;
+      }, 100);
+    }
+
+    discoverTrigger?.addEventListener('mouseenter', openPanel);
+    discoverTrigger?.addEventListener('click', () => { isOpen ? closePanel() : openPanel(); });
+    discoverPanel?.addEventListener('mouseenter', () => clearTimeout(panelTimeout));
+    discoverPanel?.addEventListener('mouseleave', closePanel);
+    discoverTrigger?.addEventListener('mouseleave', closePanel);
+  </script>
+</Layout>

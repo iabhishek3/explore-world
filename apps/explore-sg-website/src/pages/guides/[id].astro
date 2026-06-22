@@ -1,0 +1,354 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { supabase } from '../../lib/supabase';
+
+const { id } = Astro.params;
+
+// Fetch this guide with all its items
+const { data: guide } = await supabase
+  .from('recommendations')
+  .select('*, recommendation_items(*)')
+  .eq('id', id)
+  .single();
+
+if (!guide) {
+  return Astro.redirect('/');
+}
+
+// Fetch all guides for sidebar navigation
+const { data: allGuides } = await supabase
+  .from('recommendations')
+  .select('id, headline, tag, recommendation_items(count)')
+  .order('sort_order');
+
+const itemCount = guide.recommendation_items?.length ?? 0;
+---
+
+<Layout title={`${guide.headline} — Singapore Guide 2026 | Explore Singapore`} description={guide.description?.slice(0, 155) || `${guide.headline} — curated local recommendations for Singapore. Verified places with addresses and tips.`} ogImage={guide.image_url || '/og-image.jpg'} canonical={`https://exploresg.info/guides/${guide.id}`} type="article">
+  <main>
+
+  <!-- Nav -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#f0f0f0]">
+    <div class="max-w-[1200px] mx-auto px-6 h-[64px] flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+        </div>
+        <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+      </a>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-1">
+          <button id="discover-trigger" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            Discover
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 256 256" fill="currentColor" class="mt-px transition-transform" id="discover-chevron"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"></path></svg>
+          </button>
+          <a href="/guides" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">Guides</a>
+          <a href="/about" class="text-[14px] text-[#555] hover:text-[#1a1a1a] px-4 py-2 rounded-lg hover:bg-[#f5f5f5] transition-all">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="https://app.exploresg.info" class="text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Open Planner
+          </a>
+        </div>
+        <!-- Mobile menu button -->
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-lg hover:bg-[#f5f5f5] transition-colors" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+        </button>
+      </div>
+    </div>
+    <!-- Full-width Submenu -->
+    <div id="discover-panel" class="hidden bg-white border-t border-[#f0f0f0]">
+      <div class="max-w-[1200px] mx-auto px-6 py-6">
+        <div class="grid grid-cols-3 gap-6">
+          <a href="/places" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Places to Visit</p>
+              <p class="text-[13px] text-[#888] mt-0.5">100+ curated spots across Singapore</p>
+            </div>
+          </a>
+          <a href="/things-to-do" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">Things to Do</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Activities, attractions & hidden gems</p>
+            </div>
+          </a>
+          <a href="/singapore-itinerary" class="group flex gap-4 p-4 rounded-xl hover:bg-[#f8f8f8] transition-colors">
+            <div class="w-10 h-10 rounded-lg bg-[#f5f5f5] flex items-center justify-center shrink-0 group-hover:bg-[#eee] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 256 256" fill="#1a1a1a"><path d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,176H48V48H208V208ZM80,80A8,8,0,0,1,88,72h24a8,8,0,0,1,0,16H88A8,8,0,0,1,80,80Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,128Zm0,48a8,8,0,0,1,8-8h80a8,8,0,0,1,0,16H88A8,8,0,0,1,80,176Z"></path></svg>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-[#1a1a1a] group-hover:text-[#EF3340] transition-colors">3-Day Itinerary</p>
+              <p class="text-[13px] text-[#888] mt-0.5">Ready-made day-by-day plan</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-[#f0f0f0] px-6 py-4 space-y-1">
+      <a href="/places" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Places</a>
+      <a href="/guides" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">Guides</a>
+      <a href="/about" class="block text-[15px] text-[#555] hover:text-[#1a1a1a] py-3 border-b border-[#f5f5f5]">About</a>
+      <div class="pt-3">
+        <a href="https://app.exploresg.info" class="block text-center text-[14px] font-semibold text-white bg-[#1a1a1a] py-3 rounded-xl">Plan Your Trip</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Guide Header -->
+  <section class="pt-12 pb-8 md:pt-16 md:pb-12">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="max-w-[720px]">
+        <!-- Breadcrumb -->
+        <div class="flex items-center gap-2 text-[13px] text-[#999] mb-6">
+          <a href="/" class="hover:text-[#1a1a1a] transition-colors">Home</a>
+          <span>/</span>
+          <a href="/#guides" class="hover:text-[#1a1a1a] transition-colors">Guides</a>
+          <span>/</span>
+          <span class="text-[#666]">{guide.tag}</span>
+        </div>
+
+        <!-- Tag -->
+        <p class="text-[12px] font-medium text-[#999] uppercase tracking-wide mb-4">{guide.tag}</p>
+
+        <!-- Title -->
+        <h1 class="text-[2rem] md:text-[2.5rem] font-extrabold leading-[1.15] tracking-[-0.02em] text-[#1a1a1a]">
+          {guide.headline}
+        </h1>
+
+        <!-- Subtitle -->
+        {guide.subtitle && (
+          <p class="mt-3 text-[18px] text-[#666] leading-relaxed">{guide.subtitle}</p>
+        )}
+
+        <!-- Meta -->
+        <div class="mt-5 flex items-center gap-4 text-[13px] text-[#999]">
+          <span class="flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            {itemCount} places
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h56A8,8,0,0,1,192,128Z"></path></svg>
+            5 min read
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Image -->
+  {guide.image_url && (
+    <section class="pb-10 md:pb-14">
+      <div class="max-w-[1200px] mx-auto px-6">
+        <div class="rounded-2xl overflow-hidden aspect-[21/9] bg-[#f5f5f5]">
+          <img src={guide.image_url} alt={guide.headline} class="w-full h-full object-cover" />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Content -->
+  <section class="pb-20 md:pb-28">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-10 md:gap-16">
+        <!-- Main content -->
+        <div class="md:col-span-8">
+          <!-- Description -->
+          {guide.description && (
+            <div class="mb-12 pb-10 border-b border-[#f0f0f0]">
+              <p class="text-[16px] text-[#555] leading-[1.75]">{guide.description}</p>
+            </div>
+          )}
+
+          <!-- Places list -->
+          <div class="space-y-8">
+            {guide.recommendation_items?.map((item: any, index: number) => (
+              <article class="group">
+                <div class="flex gap-5">
+                  <!-- Number -->
+                  <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-[14px] font-bold text-white bg-[#1a1a1a]">
+                    {index + 1}
+                  </div>
+
+                  <!-- Content -->
+                  <div class="flex-1 min-w-0 pt-1">
+                    <h3 class="text-[18px] font-bold text-[#1a1a1a] mb-1.5">{item.title}</h3>
+
+                    <!-- Address/Location -->
+                    {item.date && (
+                      <div class="flex items-center gap-1.5 text-[13px] text-[#999] mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+                        {item.date}
+                      </div>
+                    )}
+
+                    <!-- Description -->
+                    <p class="text-[15px] text-[#555] leading-[1.7]">{item.description}</p>
+
+                    <!-- Link -->
+                    {item.url && (
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 mt-3 text-[13px] font-medium hover:underline transition-colors" class="text-[#1a1a1a]">
+                        Visit website
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M224,104a8,8,0,0,1-16,0V59.31l-66.34,66.35a8,8,0,0,1-11.32-11.32L196.69,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H48A16,16,0,0,0,32,80V208a16,16,0,0,0,16,16H176a16,16,0,0,0,16-16V136A8,8,0,0,0,184,128Z"></path></svg>
+                      </a>
+                    )}
+                  </div>
+                </div>
+
+                <!-- Divider (not on last item) -->
+                {index < (guide.recommendation_items?.length ?? 0) - 1 && (
+                  <div class="ml-5 pl-5 mt-8 border-l-2 border-[#f0f0f0] h-0"></div>
+                )}
+              </article>
+            ))}
+          </div>
+
+          <!-- CTA after places -->
+          <div class="mt-14 p-8 bg-[#fafafa] rounded-2xl border border-[#eaeaea] text-center">
+            <h3 class="text-[18px] font-bold text-[#1a1a1a] mb-2">Want to visit these places?</h3>
+            <p class="text-[14px] text-[#666] mb-5">Add them to your trip itinerary and plan your route on the map.</p>
+            <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 bg-[#EF3340] text-white font-semibold px-6 py-3 rounded-full text-[14px] hover:bg-[#d62b36] transition-colors">
+              Open Trip Planner
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69l-58.35-58.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="md:col-span-4">
+          <div class="md:sticky md:top-[88px] space-y-6">
+            <!-- Quick info card -->
+            <div class="bg-[#fafafa] rounded-xl p-5 border border-[#eaeaea]">
+              <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wide mb-3">About this guide</p>
+              <div class="space-y-3 text-[13px] text-[#666]">
+                <div class="flex items-center justify-between">
+                  <span>Category</span>
+                  <span class="font-medium text-[#1a1a1a]">{guide.tag}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Places</span>
+                  <span class="font-medium text-[#1a1a1a]">{itemCount}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span>Cost</span>
+                  <span class="font-medium text-[#1a1a1a]">Free to read</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other guides -->
+            <div class="bg-white rounded-xl p-5 border border-[#eaeaea]">
+              <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wide mb-4">More guides</p>
+              <div class="space-y-1">
+                {allGuides?.filter(g => g.id !== guide.id).map((g) => {
+                  const count = g.recommendation_items?.[0]?.count ?? 0;
+                  return (
+                    <a href={`/guides/${g.id}`} class="flex items-center justify-between p-2.5 rounded-lg hover:bg-[#f8f8f8] transition-colors">
+                      <p class="text-[13px] font-medium text-[#1a1a1a] truncate">{g.headline}</p>
+                      <span class="text-[11px] text-[#999] shrink-0 ml-2">{count}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#f0f0f0] pt-16 pb-8">
+    <div class="max-w-[1200px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-8 pb-12">
+        <div class="md:col-span-5">
+          <a href="/" class="flex items-center gap-2 mb-4">
+            <div class="w-7 h-7 rounded-md bg-[#EF3340] flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="white"><path d="M128,16a88.1,88.1,0,0,0-88,88c0,75.3,80,132.17,83.36,134.55a8,8,0,0,0,9.28,0C136,236.17,216,179.3,216,104A88.1,88.1,0,0,0,128,16Zm0,56a32,32,0,1,1-32,32A32,32,0,0,1,128,72Z"></path></svg>
+            </div>
+            <span class="text-[16px] font-bold text-[#1a1a1a]">Explore <span class="text-[#EF3340]">Singapore</span></span>
+          </a>
+          <p class="text-[14px] text-[#888] leading-relaxed max-w-[320px]">
+            Free AI-powered trip planner for Singapore. Curated places, local guides, and an interactive itinerary builder.
+          </p>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Product</p>
+          <ul class="space-y-3">
+            <li><a href="/places" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Places</a></li>
+            <li><a href="/guides" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Guides</a></li>
+            <li><a href="https://app.exploresg.info" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Open Planner</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Company</p>
+          <ul class="space-y-3">
+            <li><a href="/about" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">About</a></li>
+            <li><a href="/privacy" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Privacy</a></li>
+            <li><a href="/terms" class="text-[14px] text-[#888] hover:text-[#1a1a1a] transition-colors">Terms</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-3">
+          <p class="text-[12px] font-semibold text-[#1a1a1a] uppercase tracking-wider mb-4">Open the app</p>
+          <a href="https://app.exploresg.info" class="inline-flex items-center gap-2 text-[13px] font-semibold text-white bg-[#1a1a1a] px-5 py-2.5 rounded-full hover:bg-[#333] transition-colors">
+            Plan Your Trip
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69l-58.35-58.34a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+          </a>
+        </div>
+      </div>
+      <div class="pt-8 border-t border-[#f0f0f0] flex flex-col md:flex-row items-center justify-between gap-3">
+        <p class="text-[13px] text-[#ccc]">&copy; 2026 Explore Singapore</p>
+        <p class="text-[13px] text-[#ccc]">Made in Singapore</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+    });
+    mobileMenu?.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu?.classList.add('hidden'));
+    });
+
+    // Full-width submenu
+    const discoverTrigger = document.getElementById('discover-trigger');
+    const discoverPanel = document.getElementById('discover-panel');
+    const discoverChevron = document.getElementById('discover-chevron');
+    let panelTimeout;
+    let isOpen = false;
+
+    function openPanel() {
+      clearTimeout(panelTimeout);
+      discoverPanel?.classList.remove('hidden');
+      discoverPanel?.classList.add('animate-dropdown');
+      discoverChevron?.style.setProperty('transform', 'rotate(180deg)');
+      isOpen = true;
+    }
+
+    function closePanel() {
+      panelTimeout = setTimeout(() => {
+        discoverPanel?.classList.add('hidden');
+        discoverPanel?.classList.remove('animate-dropdown');
+        discoverChevron?.style.setProperty('transform', 'rotate(0deg)');
+        isOpen = false;
+      }, 100);
+    }
+
+    discoverTrigger?.addEventListener('mouseenter', openPanel);
+    discoverTrigger?.addEventListener('click', () => { isOpen ? closePanel() : openPanel(); });
+    discoverPanel?.addEventListener('mouseenter', () => clearTimeout(panelTimeout));
+    discoverPanel?.addEventListener('mouseleave', closePanel);
+    discoverTrigger?.addEventListener('mouseleave', closePanel);
+  </script>
+</Layout>

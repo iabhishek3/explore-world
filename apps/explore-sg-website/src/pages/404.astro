@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Page Not Found | Explore Singapore" description="The page you're looking for doesn't exist. Head back to Explore Singapore to discover places, guides, and plan your trip.">
+  <nav class="w-full border-b border-gray-100 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-2 text-lg font-bold">
+        <span class="w-8 h-8 bg-[#EF3340] rounded-lg flex items-center justify-center text-white text-sm">✦</span>
+        Explore <span class="text-[#EF3340]">Singapore</span>
+      </a>
+      <div class="flex items-center gap-6 text-sm font-medium text-gray-600">
+        <a href="/places" class="hover:text-gray-900 transition-colors">Places</a>
+        <a href="/guides" class="hover:text-gray-900 transition-colors">Guides</a>
+        <a href="/planner" class="hover:text-gray-900 transition-colors">Open Planner</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-1 flex items-center justify-center min-h-[70vh] px-4">
+    <div class="text-center">
+      <p class="text-[10rem] font-bold leading-none text-[#f0f0f0] select-none">404</p>
+      <h1 class="text-3xl font-bold text-gray-900 -mt-8">Page not found</h1>
+      <p class="mt-4 text-gray-500 max-w-md mx-auto">
+        Sorry, we couldn't find the page you're looking for. It may have been moved or no longer exists.
+      </p>
+      <a
+        href="/"
+        class="inline-block mt-8 px-6 py-3 bg-[#EF3340] text-white font-medium rounded-lg hover:bg-[#d12a36] transition-colors"
+      >
+        Back to home
+      </a>
+    </div>
+  </main>
+
+  <footer class="border-t border-gray-100 py-8 text-center text-sm text-gray-400">
+    <p>&copy; {new Date().getFullYear()} Explore Singapore. All rights reserved.</p>
+  </footer>
+</Layout>

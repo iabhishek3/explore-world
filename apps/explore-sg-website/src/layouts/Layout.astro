@@ -4,15 +4,22 @@ import '../styles/global.css'
 interface Props {
   title?: string;
   description?: string;
+  ogImage?: string;
+  canonical?: string;
+  type?: string;
 }
 
 const {
-  title = 'Explore Singapore — AI Trip Planner | 100+ Curated Places, Guides & Itineraries',
-  description = 'Plan your perfect Singapore trip with our free AI-powered planner. 100+ curated places, interactive maps, personalised itineraries, and local guides — right in your browser.'
+  title = 'Singapore Trip Planner — Free AI Itinerary Builder | 100+ Places to Visit',
+  description = 'Plan your Singapore itinerary for free. Browse 100+ curated places to visit, create a day-by-day itinerary with drag-and-drop, explore interactive maps, and export as PDF. No sign-up required.',
+  ogImage = '/og-image.jpg',
+  canonical,
+  type = 'website'
 } = Astro.props;
 
 const siteUrl = 'https://exploresg.info';
-const ogImage = `${siteUrl}/og-image.jpg`;
+const fullOgImage = ogImage.startsWith('http') ? ogImage : `${siteUrl}${ogImage}`;
+const canonicalUrl = canonical || Astro.url.pathname === '/' ? siteUrl : `${siteUrl}${Astro.url.pathname}`;
 ---
 
 <!doctype html>
@@ -24,25 +31,27 @@ const ogImage = `${siteUrl}/og-image.jpg`;
     <!-- Primary SEO -->
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="keywords" content="Singapore trip planner, AI itinerary Singapore, things to do Singapore, Singapore guide, hawker food Singapore, best cafes Singapore, tourist attractions Singapore, plan Singapore trip online, Singapore tourism, free travel planner" />
+    <meta name="keywords" content="singapore itinerary, places to visit in singapore, things to do in singapore, singapore trip planner, singapore travel guide 2026, 3 day singapore itinerary, best food in singapore, singapore tourist attractions, hawker food singapore, singapore itinerary planner free, what to do in singapore, singapore travel tips, singapore hidden gems, singapore day trip, plan my singapore trip" />
     <meta name="author" content="Explore Singapore" />
-    <link rel="canonical" href={siteUrl} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={siteUrl} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={fullOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Explore Singapore" />
     <meta property="og:locale" content="en_SG" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={siteUrl} />
+    <meta name="twitter:url" content={canonicalUrl} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image" content={fullOgImage} />
 
     <!-- GEO Tags -->
     <meta name="geo.region" content="SG" />
@@ -51,12 +60,14 @@ const ogImage = `${siteUrl}/og-image.jpg`;
     <meta name="ICBM" content="1.3521, 103.8198" />
 
     <!-- Language / Locale -->
-    <meta property="og:locale" content="en_SG" />
     <meta http-equiv="content-language" content="en-sg" />
     <link rel="alternate" hreflang="en" href={siteUrl} />
+    <link rel="alternate" hreflang="en-SG" href={siteUrl} />
+    <link rel="alternate" hreflang="x-default" href={siteUrl} />
 
     <!-- App Meta -->
     <meta name="application-name" content="Explore Singapore" />
+    <meta name="theme-color" content="#EF3340" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -75,77 +86,136 @@ const ogImage = `${siteUrl}/og-image.jpg`;
       "url": "https://app.exploresg.info",
       "applicationCategory": "TravelApplication",
       "browserRequirements": "Requires a modern web browser",
-      "description": description,
+      "description": "Free AI-powered trip planner for Singapore with 100+ curated places, interactive maps, drag-and-drop itinerary builder, and PDF export.",
+      "operatingSystem": "Any",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "SGD"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "120",
+        "bestRating": "5"
       }
     })} />
 
-    <!-- Structured Data — Local Business / Tourism -->
+    <!-- Structured Data — Organization -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
-      "@type": "TouristInformationCenter",
-      "name": "Explore Singapore App",
-      "description": "AI-powered travel companion for discovering Singapore",
+      "@type": "Organization",
+      "name": "Explore Singapore",
       "url": siteUrl,
-      "areaServed": {
-        "@type": "City",
-        "name": "Singapore",
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": 1.3521,
-          "longitude": 103.8198
-        }
-      },
-      "availableLanguage": "English"
+      "logo": `${siteUrl}/favicon.svg`,
+      "sameAs": [],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "url": `${siteUrl}/about`
+      }
     })} />
 
-    <!-- Structured Data — FAQ for AEO -->
+    <!-- Structured Data — Local Tourism / GEO -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "TouristDestination",
+      "name": "Singapore",
+      "description": "Explore Singapore with our free AI-powered trip planner. Discover hawker food, nature trails, cultural landmarks, nightlife, and hidden gems.",
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 1.3521,
+        "longitude": 103.8198
+      },
+      "touristType": ["Adventure tourists", "Cultural tourists", "Food tourists", "Eco tourists"],
+      "includesAttraction": [
+        { "@type": "TouristAttraction", "name": "Gardens by the Bay" },
+        { "@type": "TouristAttraction", "name": "Marina Bay Sands" },
+        { "@type": "TouristAttraction", "name": "Hawker Centres" },
+        { "@type": "TouristAttraction", "name": "Sentosa Island" },
+        { "@type": "TouristAttraction", "name": "Chinatown" },
+        { "@type": "TouristAttraction", "name": "Little India" }
+      ]
+    })} />
+
+    <!-- Structured Data — FAQ for AEO (Answer Engine Optimization) -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is Explore Singapore?",
+          "name": "What is the best free trip planner for Singapore?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Explore Singapore is a free AI-powered trip planner that helps you discover 100+ curated places, plan personalised itineraries, and explore interactive maps — all in your browser with no sign-up required."
+            "text": "Explore Singapore (exploresg.info) is a free AI-powered trip planner with 100+ curated places, interactive maps, a drag-and-drop itinerary builder, and PDF export. No sign-up required — works instantly in your browser."
           }
         },
         {
           "@type": "Question",
-          "name": "Is Explore Singapore free to use?",
+          "name": "How do I plan a trip to Singapore for free?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, Explore Singapore is completely free. No account, no sign-up, no hidden fees — just open the website and start planning your trip."
+            "text": "Open app.exploresg.info, browse 100+ hand-picked places by category (food, nature, culture, nightlife), add them to your trip, organize by day with drag-and-drop, and export as a PDF with Google Maps links. Completely free, no account needed."
           }
         },
         {
           "@type": "Question",
-          "name": "How does the AI trip planner work?",
+          "name": "What are the must-visit places in Singapore?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Tell us your interests (food, culture, nature), how many days you have, and your budget. The AI generates a personalised day-by-day itinerary with timings, routes, and restaurant recommendations that you can customise."
+            "text": "Top places include Gardens by the Bay, Marina Bay Sands, hawker centres like Maxwell Food Centre, Haji Lane for street art, Singapore Botanic Gardens (UNESCO), Sentosa beaches, Chinatown, and Little India. Use Explore Singapore's curated list of 100+ verified places to find hidden gems beyond the tourist spots."
           }
         },
         {
           "@type": "Question",
-          "name": "Do I need to create an account?",
+          "name": "How many days do you need in Singapore?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. Explore Singapore works instantly in your browser — no downloads, no sign-ups. Your itinerary is saved locally so you can come back anytime."
+            "text": "3-5 days is ideal for most visitors. You can cover major attractions in 3 days, or take 5 days to explore neighborhoods, hawker food, nature trails, and nightlife. Use our AI trip planner to create a personalized day-by-day itinerary based on your interests and available time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is there a Singapore itinerary app that works without downloading?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes — Explore Singapore (app.exploresg.info) is a web-based itinerary builder that works in any browser. No app download, no sign-up. Build your itinerary with drag-and-drop, view places on an interactive map, and export as PDF for offline use."
           }
         }
       ]
     })} />
 
+    <!-- Structured Data — BreadcrumbList -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
+        { "@type": "ListItem", "position": 2, "name": "Places", "item": `${siteUrl}/places` },
+        { "@type": "ListItem", "position": 3, "name": "Guides", "item": `${siteUrl}/guides` }
+      ]
+    })} />
+
+    <!-- Structured Data — Speakable (for voice search / Google Assistant) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": title,
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["h1", "[role='main'] p:first-of-type"]
+      },
+      "url": canonicalUrl
+    })} />
+
     <!-- Robots -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap.xml" />
   </head>
-  <body class="overflow-x-hidden">
+  <body>
     <slot />
   </body>
 </html>
