@@ -12,15 +12,15 @@ interface Props {
 const ALL_CATEGORIES: Category[] = ['food', 'nature', 'culture', 'shopping', 'nightlife', 'arts', 'architecture', 'neighbourhood', 'attractions'];
 
 const CATEGORY_ICONS: Record<string, JSX.Element> = {
-  food: <Utensils size={18} strokeWidth={1.5} />,
-  nature: <Trees size={18} strokeWidth={1.5} />,
-  culture: <Landmark size={18} strokeWidth={1.5} />,
-  shopping: <ShoppingBag size={18} strokeWidth={1.5} />,
-  nightlife: <Moon size={18} strokeWidth={1.5} />,
-  arts: <Palette size={18} strokeWidth={1.5} />,
-  architecture: <Building2 size={18} strokeWidth={1.5} />,
-  neighbourhood: <MapPin size={18} strokeWidth={1.5} />,
-  attractions: <Star size={18} strokeWidth={1.5} />,
+  food: <Utensils size={16} strokeWidth={1.5} />,
+  nature: <Trees size={16} strokeWidth={1.5} />,
+  culture: <Landmark size={16} strokeWidth={1.5} />,
+  shopping: <ShoppingBag size={16} strokeWidth={1.5} />,
+  nightlife: <Moon size={16} strokeWidth={1.5} />,
+  arts: <Palette size={16} strokeWidth={1.5} />,
+  architecture: <Building2 size={16} strokeWidth={1.5} />,
+  neighbourhood: <MapPin size={16} strokeWidth={1.5} />,
+  attractions: <Star size={16} strokeWidth={1.5} />,
 };
 
 export default function FilterBar({ active, onChange, collapsed }: Props) {
@@ -33,20 +33,20 @@ export default function FilterBar({ active, onChange, collapsed }: Props) {
   }
 
   return (
-    <div className="flex items-center justify-center py-5 overflow-x-auto no-scrollbar">
-      <div className={`relative inline-flex items-center rounded-full border no-scrollbar transition-all duration-300 max-w-full ${collapsed ? 'gap-0 px-2 py-1.5 overflow-visible bg-white/70 backdrop-blur-md border-zinc-200/50 shadow-sm' : 'gap-1 px-3 py-2 overflow-x-auto bg-white border-zinc-200 shadow-sm'}`}>
+    <div className="flex items-center py-3 md:py-4 overflow-x-auto no-scrollbar">
+      <div className={`relative inline-flex items-center rounded-full border no-scrollbar transition-all duration-300 max-w-full ${collapsed ? 'gap-0 px-2 py-1.5 overflow-visible bg-white/70 backdrop-blur-md border-zinc-200/50 shadow-sm' : 'gap-1 px-2 py-1.5 overflow-x-auto bg-white border-zinc-200 shadow-sm'}`}>
         {ALL_CATEGORIES.map(cat => {
           const isActive = active.includes(cat);
           return (
             <button
               key={cat}
               onClick={() => toggle(cat)}
-              className={`group relative shrink-0 inline-flex items-center justify-center transition-all duration-300 cursor-pointer rounded-full ${
+              className={`group relative shrink-0 inline-flex items-center justify-center transition-all duration-200 cursor-pointer rounded-full active:scale-95 ${
                 collapsed ? 'w-8 h-8' : 'h-8 px-3 gap-1.5'
               } ${
                 isActive
-                  ? 'bg-[#EF3340]/10 text-[#EF3340]'
-                  : 'text-zinc-400 hover:text-zinc-600 active:scale-95'
+                  ? 'bg-violet-600 text-white'
+                  : 'text-zinc-400 hover:text-zinc-700 hover:bg-zinc-50'
               }`}
             >
               <span className="shrink-0 flex items-center justify-center">

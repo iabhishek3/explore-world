@@ -6,16 +6,16 @@ interface StepInterestsProps {
   onChange: (interests: Category[]) => void;
 }
 
-const categories: { id: Category; label: string; emoji: string; color: string }[] = [
-  { id: 'food', label: 'Food & Dining', emoji: '🍜', color: '#f97316' },
-  { id: 'nature', label: 'Nature & Parks', emoji: '🌿', color: '#22c55e' },
-  { id: 'culture', label: 'Culture & Heritage', emoji: '🏛️', color: '#8b5cf6' },
-  { id: 'shopping', label: 'Shopping', emoji: '🛍️', color: '#ec4899' },
-  { id: 'nightlife', label: 'Nightlife', emoji: '🌃', color: '#a855f7' },
-  { id: 'arts', label: 'Arts & Museums', emoji: '🎨', color: '#06b6d4' },
-  { id: 'architecture', label: 'Architecture', emoji: '🏗️', color: '#64748b' },
-  { id: 'neighbourhood', label: 'Neighbourhoods', emoji: '🏘️', color: '#f97316' },
-  { id: 'attractions', label: 'Attractions', emoji: '🎡', color: '#3b82f6' },
+const categories: { id: Category; label: string; emoji: string }[] = [
+  { id: 'food', label: 'Food & Dining', emoji: '🍜' },
+  { id: 'nature', label: 'Nature & Parks', emoji: '🌿' },
+  { id: 'culture', label: 'Culture & Heritage', emoji: '🏛️' },
+  { id: 'shopping', label: 'Shopping', emoji: '🛍️' },
+  { id: 'nightlife', label: 'Nightlife', emoji: '🌃' },
+  { id: 'arts', label: 'Arts & Museums', emoji: '🎨' },
+  { id: 'architecture', label: 'Architecture', emoji: '🏗️' },
+  { id: 'neighbourhood', label: 'Neighbourhoods', emoji: '🏘️' },
+  { id: 'attractions', label: 'Attractions', emoji: '🎡' },
 ];
 
 export default function StepInterests({ value, onChange }: StepInterestsProps) {
@@ -33,7 +33,7 @@ export default function StepInterests({ value, onChange }: StepInterestsProps) {
         <h2 className="text-2xl md:text-3xl font-bold text-zinc-900 leading-tight">
           What are you into?
         </h2>
-        <p className="text-base text-zinc-500 mt-3">Pick as many as you like — we'll mix them in</p>
+        <p className="text-sm text-zinc-500 mt-3">Pick as many as you like — we'll mix them in</p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -43,14 +43,14 @@ export default function StepInterests({ value, onChange }: StepInterestsProps) {
             <button
               key={cat.id}
               onClick={() => toggle(cat.id)}
-              className={`flex items-center gap-3 p-3.5 md:p-4 rounded-2xl border-2 transition-all active:scale-[0.97] text-left ${
+              className={`flex items-center gap-3 p-3.5 rounded-xl border-2 transition-all active:scale-[0.97] text-left ${
                 selected
-                  ? 'border-violet-500 bg-violet-50 shadow-sm'
-                  : 'border-zinc-100 bg-white hover:border-zinc-200'
+                  ? 'border-violet-600 bg-violet-50'
+                  : 'border-zinc-100 bg-white hover:border-zinc-200 hover:bg-zinc-50'
               }`}
             >
               <span className="text-xl">{cat.emoji}</span>
-              <span className={`text-[13px] md:text-[14px] font-semibold leading-tight ${
+              <span className={`text-sm font-semibold leading-tight ${
                 selected ? 'text-violet-700' : 'text-zinc-700'
               }`}>
                 {cat.label}
@@ -61,14 +61,9 @@ export default function StepInterests({ value, onChange }: StepInterestsProps) {
       </div>
 
       {value.length > 0 && (
-        <div className="flex items-center gap-2 text-violet-600">
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="text-sm font-semibold">
-            {value.length} {value.length === 1 ? 'interest' : 'interests'} selected
-          </span>
-        </div>
+        <p className="text-sm font-medium text-violet-600">
+          {value.length} {value.length === 1 ? 'interest' : 'interests'} selected
+        </p>
       )}
     </div>
   );

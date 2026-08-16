@@ -26,7 +26,7 @@ export default function GridView({ places, onAdd, onRemove, tripPlaceIds, compac
 
   return (
     <>
-      <div className="overflow-y-auto h-full px-6 pt-24 pb-10" onScroll={onScroll ? (e) => onScroll((e.target as HTMLDivElement).scrollTop) : undefined}>
+      <div className="overflow-y-auto h-full px-6 pt-4 md:pt-20 pb-10" onScroll={onScroll ? (e) => onScroll((e.target as HTMLDivElement).scrollTop) : undefined}>
         <div className={`max-w-[1600px] mx-auto grid gap-x-6 gap-y-10 ${compact ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}`}>
           {places.map(place => (
             <PlaceItem

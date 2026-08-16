@@ -161,7 +161,7 @@ export default function AIPlannerModal({ onClose, onApply }: AIPlannerModalProps
             <button
               onClick={handleNext}
               disabled={!canProceed()}
-              className="w-full py-4 rounded-2xl text-[15px] font-semibold bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-30 disabled:scale-100 shadow-lg shadow-violet-200"
+              className="w-full py-3.5 rounded-xl text-[15px] font-semibold bg-violet-600 text-white hover:bg-violet-700 active:scale-[0.98] transition-all disabled:opacity-30 disabled:scale-100"
             >
               {step === 4 ? 'Generate My Itinerary' : 'Continue'}
             </button>

@@ -24,7 +24,7 @@ function loadItinerary(): ItineraryDay[] {
 
 export default function App({ places }: AppProps) {
   const [showMap, setShowMap] = useState(false);
-  const [activeFilters, setActiveFilters] = useState<Category[]>(['food', 'nature', 'culture', 'shopping', 'nightlife', 'arts', 'architecture', 'neighbourhood', 'attractions']);
+  const [activeFilters, setActiveFilters] = useState<Category[]>([]);
   const [days, setDays] = useState<ItineraryDay[]>(loadItinerary);
   const [showItinerary, setShowItinerary] = useState(false);
   const [focusPlace, setFocusPlace] = useState<Place | null>(null);
@@ -36,7 +36,7 @@ export default function App({ places }: AppProps) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(days));
   }, [days]);
 
-  const filteredPlaces = places.filter(p => activeFilters.includes(p.category));
+  const filteredPlaces = activeFilters.length === 0 ? places : places.filter(p => activeFilters.includes(p.category));
   const tripPlaceIds = new Set(days.flatMap(d => d.places.map(p => p.id)));
 
   const addToTrip = useCallback((place: Place) => {
@@ -59,10 +59,7 @@ export default function App({ places }: AppProps) {
   const handlePlaceClick = useCallback((place: Place) => {
     setShowMap(true);
     setFocusPlace(place);
-    if (!activeFilters.includes(place.category)) {
-      setActiveFilters(prev => [...prev, place.category]);
-    }
-  }, [activeFilters]);
+  }, []);
 
   const handleGridScroll = useCallback((scrollTop: number) => {
     if (scrollTop > lastScrollY.current && scrollTop > 50) {
@@ -109,6 +106,13 @@ export default function App({ places }: AppProps) {
         </div>
       </header>
 
+      {/* Mobile Filter Bar — below header */}
+      {!showMap && (
+        <div className="shrink-0 md:hidden border-b border-zinc-100 bg-white px-4 overflow-x-auto no-scrollbar">
+          <FilterBar active={activeFilters} onChange={setActiveFilters} collapsed={false} />
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Desktop: split view. Mobile: full grid or full map */}
@@ -117,8 +121,8 @@ export default function App({ places }: AppProps) {
         <div className={`overflow-hidden relative transition-all duration-300 ${
           showMap ? 'hidden md:block md:w-1/2 md:border-r md:border-zinc-100' : 'flex-1'
         }`}>
-          {/* Floating Filter Bar */}
-          <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none px-6">
+          {/* Floating Filter Bar — desktop only */}
+          <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none px-6 hidden md:block">
             <div className="pointer-events-auto flex justify-center">
               <FilterBar active={activeFilters} onChange={setActiveFilters} collapsed={filtersCollapsed || showMap} />
             </div>
@@ -135,26 +139,18 @@ export default function App({ places }: AppProps) {
           </div>
         )}
 
-        {/* Itinerary Panel */}
-        {showItinerary && (
-          <div className="w-[300px] shrink-0 border-l border-zinc-200 bg-zinc-50 hidden md:flex flex-col">
-            <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
-          </div>
-        )}
       </div>
 
       {/* Floating Toggle */}
-      {!showPlanner && (
+      {!showPlanner && !showItinerary && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
           <ViewToggle showMap={showMap} onChange={setShowMap} />
         </div>
       )}
 
-      {/* Mobile Itinerary — draggable bottom sheet */}
+      {/* Itinerary Full Page */}
       {showItinerary && (
-        <MobileSheet onClose={() => setShowItinerary(false)}>
-          <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
-        </MobileSheet>
+        <Itinerary days={days} onChange={setDays} onClose={() => setShowItinerary(false)} tripPlaceIds={tripPlaceIds} onAdd={addToTrip} onRemove={removeFromTrip} />
       )}
 
       {/* AI Planner Modal */}
