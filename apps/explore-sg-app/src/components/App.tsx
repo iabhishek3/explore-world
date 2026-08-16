@@ -5,6 +5,7 @@ import ViewToggle from './ViewToggle';
 import MapView from './MapView';
 import GridView from './GridView';
 import Itinerary from './Itinerary';
+import AIPlannerModal from './AIPlannerModal';
 
 interface AppProps {
   places: Place[];
@@ -28,6 +29,7 @@ export default function App({ places }: AppProps) {
   const [showItinerary, setShowItinerary] = useState(false);
   const [focusPlace, setFocusPlace] = useState<Place | null>(null);
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+  const [showPlanner, setShowPlanner] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
@@ -95,6 +97,7 @@ export default function App({ places }: AppProps) {
             )}
           </button>
           <button
+            onClick={() => setShowPlanner(true)}
             className="flex items-center gap-2 px-2.5 md:px-3.5 py-2 rounded-full text-[13px] font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white hover:shadow-md hover:opacity-90 transition-all cursor-pointer"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -141,15 +144,37 @@ export default function App({ places }: AppProps) {
       </div>
 
       {/* Floating Toggle */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
-        <ViewToggle showMap={showMap} onChange={setShowMap} />
-      </div>
+      {!showPlanner && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999]">
+          <ViewToggle showMap={showMap} onChange={setShowMap} />
+        </div>
+      )}
 
       {/* Mobile Itinerary — draggable bottom sheet */}
       {showItinerary && (
         <MobileSheet onClose={() => setShowItinerary(false)}>
           <Itinerary days={days} onChange={setDays} onPlaceClick={handlePlaceClick} />
         </MobileSheet>
+      )}
+
+      {/* AI Planner Modal */}
+      {showPlanner && (
+        <AIPlannerModal
+          onClose={() => setShowPlanner(false)}
+          onApply={(generatedDays, mode) => {
+            if (mode === 'replace') {
+              setDays(generatedDays);
+            } else {
+              setDays(prev => [...prev, ...generatedDays.map((d, i) => ({
+                ...d,
+                id: String(prev.length + i + 1),
+                label: `Day ${prev.length + i + 1}`,
+              }))]);
+            }
+            setShowPlanner(false);
+            setShowItinerary(true);
+          }}
+        />
       )}
     </div>
   );
